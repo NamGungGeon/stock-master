@@ -1,59 +1,34 @@
 import Head from "next/head";
+import React, { useEffect } from "react";
+import { applySession } from "next-session";
+import Link from "next/link";
+import PageMeta from "../components/PageMeta/PageMeta";
+import { Button } from "@material-ui/core";
+import Empty from "../components/Empty/Empty";
 
-export default function Home() {
+export default function Home({ className }) {
   return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div className={className}>
+      <PageMeta title="임시 홈" description="메뉴 리스트" />
+      <Empty size="large" />
 
-      <main>
-        <h1 className="title">
-          Learn <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
-
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a href="https://github.com/vercel/next.js/tree/master/examples" className="card">
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-          </a>
-        </div>
-      </main>
-
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
+      <Link href="/theme" className="block-link">
+        <Button color="primary" fullWidth size="large">
+          테마 목록
+        </Button>
+      </Link>
+      <Empty />
+      <Link href="/sign/out" className="block-link">
+        <Button color="primary" fullWidth size="large">
+          로그아웃
+        </Button>
+      </Link>
 
       <style jsx>{`
+        .block-link {
+          display: block;
+        }
+
         .container {
           min-height: 100vh;
           padding: 0 0.5rem;
@@ -198,3 +173,18 @@ export default function Home() {
     </div>
   );
 }
+
+export const getServerSideProps = async function({ req, res }) {
+  await applySession(req, res);
+  if (!req.session.auth)
+    return {
+      redirect: {
+        destination: "/sign/in",
+        permanent: false,
+      },
+    };
+
+  return {
+    props: {},
+  };
+};
