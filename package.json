@@ -18,7 +18,9 @@
     "mobx-react-lite": "^3.1.6",
     "moment": "^2.29.1",
     "next": "^10.0.0",
+    "next-session": "^3.4.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "urlencoded-body-parser": "^3.0.0"
   }
 }
