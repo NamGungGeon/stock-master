@@ -13,6 +13,7 @@ const PageMeta = ({ title = "", description = "", displayHTML = true }) => {
         <title>{title}</title>
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       {displayHTML && (
         <div>
