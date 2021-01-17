@@ -56,12 +56,9 @@ const theme = ({ className, themeList }) => {
   const [input, handleInput] = useInput({
     search: "",
   });
-  useEffect(() => {
-    console.log(overview);
-  }, [overview]);
 
   return (
-    <div className={className}>
+    <MainLayout className={className}>
       <PageMeta title={"테마 정보"} description={"테마 정보"} />
       <FormControl style={styles.form}>
         <div style={styles.formLine}>

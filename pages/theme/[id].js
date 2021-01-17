@@ -10,13 +10,14 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
+import MainLayout from "../../layout/MainLayout";
 
 const themeDetail = ({ className }) => {
   const router = useRouter();
   const { id } = router.query;
 
   return (
-    <div className={className}>
+    <MainLayout className={className}>
       <PageMeta title={`테마 이름`} description={`테마주 리스트`} />
       <Empty size="large" />
       <div>
@@ -170,7 +171,7 @@ const themeDetail = ({ className }) => {
         </TableContainer>
       </div>
       <Empty size="large" />
-    </div>
+    </MainLayout>
   );
 };
 
