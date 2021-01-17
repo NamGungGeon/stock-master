@@ -1,0 +1,35 @@
+@media (min-width: 1001px) {
+  .only.desktop {
+  }
+  .only.tablet,
+  .tablet {
+    display: none !important;
+  }
+  .only.mobile,
+  .mobile {
+    display: none !important;
+  }
+}
+/*tablet*/
+@media (max-width: 1000px) {
+  .only.desktop,
+  .desktop {
+    display: none !important;
+  }
+  .only.tablet {
+  }
+  .only.mobile {
+    display: none !important;
+  }
+}
+/*mobile*/
+@media (max-width: 500px) {
+  .only.desktop {
+    display: none !important;
+  }
+  .only.tablet {
+    display: none !important;
+  }
+  .only.mobile {
+  }
+}
