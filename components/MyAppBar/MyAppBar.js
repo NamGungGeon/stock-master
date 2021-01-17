@@ -9,6 +9,7 @@ import pagemeta from "../../observables/pagemeta";
 import className from "classnames";
 import { Drawer } from "@material-ui/core";
 import MenuList from "../MenuList/MenuList";
+import { observer } from "mobx-react-lite";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,4 +58,4 @@ const MyAppBar = () => {
   );
 };
 
-export default MyAppBar;
+export default observer(MyAppBar);
