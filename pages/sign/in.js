@@ -12,6 +12,7 @@ import LockIcon from "@material-ui/icons/Lock";
 import { login } from "../../http";
 import { applySession } from "next-session";
 import parse from "urlencoded-body-parser";
+import auth from "../../observables/auth";
 
 const styles = {
   form: {
@@ -89,7 +90,6 @@ const signin = ({ className, message }) => {
 
 export const getServerSideProps = async function({ req, res }) {
   await applySession(req, res);
-  console.log(req.session);
 
   if (req.method === "POST") {
     const { id, pw } = await parse(req);
@@ -103,8 +103,9 @@ export const getServerSideProps = async function({ req, res }) {
       };
     }
 
-    const auth = await login(id, pw)
+    const tokens = await login(id, pw)
       .then((res) => {
+        console.log("auth", res.data);
         return res.data;
       })
       .catch((e) => {
@@ -114,12 +115,13 @@ export const getServerSideProps = async function({ req, res }) {
         return null;
       });
 
-    if (auth) {
-      req.session.auth = auth;
+    if (tokens) {
+      req.session.auth = tokens;
+      auth.set(tokens.access, tokens.refresh);
       return {
         redirect: {
           destination: "/",
-          permanent: false,
+          permanent: true,
         },
       };
     }
@@ -130,13 +132,13 @@ export const getServerSideProps = async function({ req, res }) {
     };
   } else {
     // Get the user's session based on the request
-    const auth = req.session.auth;
+    const tokens = req.session.auth;
 
-    if (auth)
+    if (tokens)
       return {
         redirect: {
           destination: "/",
-          permanent: false,
+          permanent: true,
         },
       };
 

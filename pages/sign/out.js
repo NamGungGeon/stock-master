@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { applySession } from "next-session";
 import { useRouter } from "next/router";
+import auth from "../../observables/auth";
 
 const out = () => {
   const router = useRouter();
@@ -14,6 +15,7 @@ const out = () => {
 export const getServerSideProps = async function({ req, res }) {
   await applySession(req, res);
   req.session.destroy();
+  auth.set();
 
   return {
     props: {},
