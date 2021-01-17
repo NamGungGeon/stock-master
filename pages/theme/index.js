@@ -21,7 +21,10 @@ import { useRouter } from "next/router";
 import { useInput } from "../../hooks";
 
 import { getThemeList } from "../../http";
-import withAuth from "../../lib/withAuth";
+import MainLayout from "../../layout/MainLayout";
+import auth from "../../observables/auth";
+import { toJS } from "mobx";
+import { withAuth } from "../../hoc/withAuth";
 
 const styles = {
   table: {
@@ -184,22 +187,22 @@ const theme = ({ className, themeList }) => {
           />
         </div>
       )}
-    </div>
+    </MainLayout>
   );
 };
 export async function getServerSideProps({ query, req, res }) {
-  await withAuth({ req, res });
   const { page = 1 } = query;
 
   const themeList = await getThemeList(page)
     .then((res) => res.data)
-    .catch((e) => e.response.data);
+    .catch((e) => e.response.status);
   console.log(themeList);
 
   return {
     props: {
       themeList,
+      auth: toJS(auth),
     }, // will be passed to the page component as props
   };
 }
-export default theme;
+export default withAuth(theme);

@@ -1,162 +1,16 @@
-import Head from "next/head";
-import React, { useEffect } from "react";
-import { applySession } from "next-session";
-import Link from "next/link";
+import React from "react";
 import PageMeta from "../components/PageMeta/PageMeta";
-import { Button } from "@material-ui/core";
 import Empty from "../components/Empty/Empty";
+import auth from "../observables/auth";
+import MainLayout from "../layout/MainLayout";
+import { toJS } from "mobx";
+import { withAuth } from "../hoc/withAuth";
 
-export default function Home({ className }) {
+function Home({ className }) {
   return (
-    <div className={className}>
-      <PageMeta title="임시 홈" description="메뉴 리스트" />
+    <MainLayout className={className}>
+      <PageMeta title="임시 홈" description="" />
       <Empty size="large" />
-
-      <Link href="/theme" className="block-link">
-        <Button color="primary" fullWidth size="large">
-          테마 목록
-        </Button>
-      </Link>
-      <Empty />
-      <Link href="/sign/out" className="block-link">
-        <Button color="primary" fullWidth size="large">
-          로그아웃
-        </Button>
-      </Link>
-
-      <style jsx>{`
-        .block-link {
-          display: block;
-        }
-
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer img {
-          margin-left: 0.5rem;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
 
       <style jsx global>{`
         html,
@@ -170,13 +24,13 @@ export default function Home({ className }) {
           box-sizing: border-box;
         }
       `}</style>
-    </div>
+    </MainLayout>
   );
 }
+export default withAuth(Home);
 
 export const getServerSideProps = async function({ req, res }) {
-  await applySession(req, res);
-  if (!req.session.auth)
+  if (!auth.isLogined)
     return {
       redirect: {
         destination: "/sign/in",
@@ -185,6 +39,8 @@ export const getServerSideProps = async function({ req, res }) {
     };
 
   return {
-    props: {},
+    props: {
+      auth: toJS(auth),
+    },
   };
 };

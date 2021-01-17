@@ -7,6 +7,7 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import { blue, pink } from "@material-ui/core/colors";
 import App from "next/app";
+import loadAuth from "../lib/loadAuth";
 
 const theme = createMuiTheme({
   palette: {
@@ -24,5 +25,11 @@ function MyApp({ Component, pageProps }) {
     </>
   );
 }
+MyApp.getInitialProps = async (appContext) => {
+  // calls page's `getInitialProps` and fills `appProps.pageProps`
+  await loadAuth(appContext.ctx);
+  const appProps = await App.getInitialProps(appContext);
+  return { ...appProps };
+};
 
 export default MyApp;

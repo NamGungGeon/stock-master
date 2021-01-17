@@ -7,12 +7,13 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import PageMeta from "../../components/PageMeta/PageMeta";
 import Empty from "../../components/Empty/Empty";
 import { useInput } from "../../hooks";
-import { Button, ButtonGroup, FormGroup } from "@material-ui/core";
+import { Button, FormGroup } from "@material-ui/core";
 import LockIcon from "@material-ui/icons/Lock";
 import { login } from "../../http";
 import { applySession } from "next-session";
 import parse from "urlencoded-body-parser";
 import auth from "../../observables/auth";
+import MainLayout from "../../layout/MainLayout";
 
 const styles = {
   form: {
@@ -21,7 +22,7 @@ const styles = {
   },
 };
 
-const signin = ({ className, message }) => {
+const signin = ({ message }) => {
   const [input, handleInput] = useInput({ id: "", pw: "" });
   useEffect(() => {
     if (message) alert(message);
@@ -36,8 +37,7 @@ const signin = ({ className, message }) => {
   };
 
   return (
-    <div
-      className={className}
+    <MainLayout
       style={{
         maxWidth: "320px",
       }}
@@ -84,7 +84,7 @@ const signin = ({ className, message }) => {
           </FormControl>
         </FormGroup>
       </form>
-    </div>
+    </MainLayout>
   );
 };
 
@@ -131,16 +131,17 @@ export const getServerSideProps = async function({ req, res }) {
       },
     };
   } else {
-    // Get the user's session based on the request
     const tokens = req.session.auth;
 
-    if (tokens)
+    if (tokens) {
+      auth.set(tokens.access, tokens.refresh);
       return {
         redirect: {
           destination: "/",
           permanent: true,
         },
       };
+    }
 
     return {
       props: {},
