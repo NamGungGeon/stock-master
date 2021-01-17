@@ -13,12 +13,15 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import { IconButton } from "@material-ui/core";
+import { Box, Collapse, IconButton } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import Empty from "../../components/Empty/Empty";
 import Pagination from "@material-ui/lab/Pagination";
 import { useRouter } from "next/router";
 import { useInput } from "../../hooks";
+
+import { getThemeList } from "../../http";
+import withAuth from "../../lib/withAuth";
 
 const styles = {
   table: {
@@ -44,38 +47,15 @@ const styles = {
   },
 };
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein, id: Math.random() * 30 };
-}
-
-const _rows = [
-  createData("정치주", 159, 6.0, 24, "2020-01-01"),
-  createData("제약주", 237, 9.0, 37, "2020-01-13"),
-  createData("폐기물주", 262, 16.0, 24, "2021-03-11"),
-  createData("폐기물주1", 262, 16.0, 24, "2021-03-11"),
-  createData("폐기물주2", 262, 16.0, 24, "2021-03-11"),
-  createData("폐기물주43", 262, 16.0, 24, "2021-03-11"),
-  createData("폐기물주4", 262, 16.0, 24, "2021-03-11"),
-  createData("폐기물주5", 262, 16.0, 24, "2021-03-11"),
-  createData("북딱주", 262, 16.0, 24, "2021-03-11"),
-  createData("북딱주1", 262, 16.0, 24, "2021-03-11"),
-  createData("북딱주2", 262, 16.0, 24, "2021-03-11"),
-  createData("북딱주3", 262, 16.0, 24, "2021-03-11"),
-  createData("북딱주4", 262, 16.0, 24, "2021-03-11"),
-  createData("북딱주5", 262, 16.0, 24, "2021-03-11"),
-  createData("북딱주6", 262, 16.0, 24, "2021-03-11"),
-  createData("북딱주7", 262, 16.0, 24, "2021-03-11"),
-];
-
-const theme = ({ className, rows }) => {
+const theme = ({ className, themeList }) => {
   const [overview, setOverview] = useState();
   const router = useRouter();
   const [input, handleInput] = useInput({
     search: "",
   });
   useEffect(() => {
-    console.log(router);
-  }, [router]);
+    console.log(overview);
+  }, [overview]);
 
   return (
     <div className={className}>
@@ -112,9 +92,9 @@ const theme = ({ className, rows }) => {
         </div>
       </FormControl>
       <Empty />
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} elevation={0} variant={"outlined"}>
         <Table style={styles.table} size="small" aria-label="a dense table">
-          {rows.length ? (
+          {themeList.length ? (
             <>
               <TableHead>
                 <TableRow>
@@ -130,44 +110,45 @@ const theme = ({ className, rows }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
+                {themeList.map((theme) => (
                   <>
                     <TableRow
-                      key={row.id}
+                      key={theme.id}
                       style={styles.tableRow}
                       onClick={(e) => {
-                        if (overview && row.id === overview.id) setOverview(null);
+                        if (overview && theme.id === overview.id) setOverview(null);
                         else
                           setOverview({
-                            id: row.id,
+                            id: theme.id,
                           });
                       }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.name}
+                        {theme.name}
+                        <p className={"explain"}>{theme.memo}</p>
                       </TableCell>
-                      <TableCell align="right">{row.protein}</TableCell>
+                      <TableCell align="right">{theme.created_date}</TableCell>
                       <TableCell
                         align="right"
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/theme/${row.id}`);
+                          router.push(`/theme/${theme.id}`);
                         }}
                       >
                         <ArrowForwardIcon />
                       </TableCell>
                     </TableRow>
-                    {overview && overview.id === row.id && (
-                      <TableRow>
-                        <TableCell colSpan={3}>
+                    <TableRow>
+                      <Collapse in={overview && overview.id === theme.id} timeout="auto" unmountOnExit>
+                        <Box margin={1} style={{ paddingBottom: 0, paddingTop: 0 }}>
                           상세정보 <br />
                           상세정보 <br />
                           상세정보 <br />
                           상세정보 <br />
                           상세정보 <br />
-                        </TableCell>
-                      </TableRow>
-                    )}
+                        </Box>
+                      </Collapse>
+                    </TableRow>
                   </>
                 ))}
               </TableBody>
@@ -184,11 +165,11 @@ const theme = ({ className, rows }) => {
         </Table>
       </TableContainer>
       <Empty size={"large"} />
-      {!!rows.length && (
+      {!!themeList.length && (
         <div className={"flex align center"}>
           <Pagination
             color={"primary"}
-            count={11}
+            count={themeList.total_pages}
             page={parseInt(router.query.page ?? 1)}
             onChange={(e, page) => {
               router.push({
@@ -206,13 +187,18 @@ const theme = ({ className, rows }) => {
     </div>
   );
 };
-export async function getServerSideProps(context) {
-  console.log(context.query);
+export async function getServerSideProps({ query, req, res }) {
+  await withAuth({ req, res });
+  const { page = 1 } = query;
 
-  const rows = _rows.sort(() => Math.random() - 0.5);
+  const themeList = await getThemeList(page)
+    .then((res) => res.data)
+    .catch((e) => e.response.data);
+  console.log(themeList);
+
   return {
     props: {
-      rows,
+      themeList,
     }, // will be passed to the page component as props
   };
 }
