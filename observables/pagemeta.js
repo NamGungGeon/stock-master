@@ -5,8 +5,8 @@ class PageMeta {
     makeAutoObservable(this);
   }
 
-  title = "ㅇㅇ";
-  description = "ㅇㅇㅇ";
+  title = "";
+  description = "";
 
   update(title = "Title", description = "desc") {
     this.title = title;
