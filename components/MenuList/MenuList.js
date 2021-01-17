@@ -12,7 +12,12 @@ const MenuList = ({ className, style }) => {
   }, [auth.isLogined]);
 
   return (
-    <div className={className} style={style}>
+    <div
+      className={className}
+      style={{
+        width: "256px",
+      }}
+    >
       {/* <AppBar
         position="static"
         elevation={0}
