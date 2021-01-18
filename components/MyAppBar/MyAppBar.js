@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import MenuIcon from "@material-ui/icons/Menu";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import pagemeta from "../../observables/pagemeta";
 import className from "classnames";
 import { Drawer } from "@material-ui/core";
 import MenuList from "../MenuList/MenuList";
 import { observer } from "mobx-react-lite";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 const MyAppBar = () => {
   const classes = useStyles();
+  const router = useRouter();
   const [openDrawer, setOpenDrawer] = useState(false);
 
   return (
@@ -41,9 +41,20 @@ const MyAppBar = () => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" className={classes.title}>
-          {pagemeta.title}
-        </Typography>
+        <div className={classes.title}>
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Nextjs-logo.svg/800px-Nextjs-logo.svg.png"
+            alt=""
+            height="42"
+            style={{
+              filter: "invert(1)",
+              cursor: "pointer",
+            }}
+            onClick={(e) => {
+              router.push("/");
+            }}
+          />
+        </div>
       </Toolbar>
       <Drawer
         anchor="left"
@@ -58,4 +69,4 @@ const MyAppBar = () => {
   );
 };
 
-export default observer(MyAppBar);
+export default MyAppBar;
