@@ -45,6 +45,14 @@ const MenuList = ({ className, style }) => {
             <ListItemText primary={"테마 목록"} />
           </ListItem>
         </Link>
+        <Link href="/theme/event">
+          <ListItem button>
+            <ListItemIcon>
+              <FolderIcon />
+            </ListItemIcon>
+            <ListItemText primary={"테마 일정"} />
+          </ListItem>
+        </Link>
         {auth.isLogined && (
           <Link href="/sign/out">
             <ListItem button>
