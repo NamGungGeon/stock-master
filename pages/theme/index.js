@@ -188,6 +188,14 @@ const theme = ({ className, themeList }) => {
   );
 };
 export async function getServerSideProps({ query, req, res }) {
+  if (!auth.isLogined)
+    return {
+      redirect: {
+        destination: "/sign/in",
+        permanent: true,
+      },
+    };
+
   const { page = 1 } = query;
 
   const themeList = await getThemeList(page)
