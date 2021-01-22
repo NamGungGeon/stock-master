@@ -30,3 +30,56 @@ export const getThemeList = (page = 1) => {
     },
   });
 };
+export const getTheme = (id) => {
+  return axios.request({
+    url: `/api/themecode/${id}/`,
+    headers: {
+      Authorization: `Bearer ${auth.access}`,
+    },
+    method: "GET",
+  });
+};
+
+export const getThemeEventList = ({ name }) => {
+  return axios.request({
+    url: `/api/themeevent/`,
+    headers: {
+      Authorization: `Bearer ${auth.access}`,
+    },
+    method: "GET",
+    params: {},
+  });
+};
+
+//테마 내 N등주 날짜별 정리 리스트 반환
+export const getRLThemeEventList = ({ name }) => {
+  return axios.request({
+    url: `/api/themeevent_rl/`,
+    headers: {
+      Authorization: `Bearer ${auth.access}`,
+    },
+    method: "GET",
+    params: { name },
+  });
+};
+
+export const getThemeRankStockListByDate = ({ theme }) => {
+  return axios.request({
+    url: `/api/themestock_rh/summary_by_date/`,
+    headers: {
+      Authorization: `Bearer ${auth.access}`,
+    },
+    method: "GET",
+    params: { theme },
+  });
+};
+export const getThemeRankStockList = ({ theme }) => {
+  return axios.request({
+    url: `/api/themestock_rh/`,
+    headers: {
+      Authorization: `Bearer ${auth.access}`,
+    },
+    method: "GET",
+    params: { theme },
+  });
+};
