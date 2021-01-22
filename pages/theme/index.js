@@ -13,7 +13,7 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import { Box, Collapse, IconButton } from "@material-ui/core";
+import { Box, Collapse, IconButton, Tooltip } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import Empty from "../../components/Empty/Empty";
 import Pagination from "@material-ui/lab/Pagination";
@@ -25,6 +25,8 @@ import MainLayout from "../../layout/MainLayout";
 import auth from "../../observables/auth";
 import { toJS } from "mobx";
 import { withAuth } from "../../hoc/withAuth";
+import { parseHTML } from "../../lib/markup";
+import MultiLines from "../../components/MultiLines/MultiLines";
 
 const styles = {
   table: {
@@ -56,7 +58,6 @@ const theme = ({ className, themeList }) => {
   const [input, handleInput] = useInput({
     search: "",
   });
-
   return (
     <MainLayout className={className}>
       <PageMeta title={"테마 정보"} description={"테마 정보"} />
@@ -94,7 +95,7 @@ const theme = ({ className, themeList }) => {
       <Empty />
       <TableContainer component={Paper} elevation={0} variant={"outlined"}>
         <Table style={styles.table} size="small" aria-label="a dense table">
-          {themeList.length ? (
+          {themeList.results.length ? (
             <>
               <TableHead>
                 <TableRow>
@@ -105,12 +106,12 @@ const theme = ({ className, themeList }) => {
                     <h3>생성일자</h3>
                   </TableCell>
                   <TableCell align="right">
-                    <h3>옵션</h3>
+                    <h3>자세히</h3>
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {themeList.map((theme) => (
+                {themeList.results.map((theme) => (
                   <>
                     <TableRow
                       key={theme.id}
@@ -125,7 +126,6 @@ const theme = ({ className, themeList }) => {
                     >
                       <TableCell component="th" scope="row">
                         {theme.name}
-                        <p className={"explain"}>{theme.memo}</p>
                       </TableCell>
                       <TableCell align="right">{theme.created_date}</TableCell>
                       <TableCell
@@ -138,17 +138,13 @@ const theme = ({ className, themeList }) => {
                         <ArrowForwardIcon />
                       </TableCell>
                     </TableRow>
-                    <TableRow>
-                      <Collapse in={overview && overview.id === theme.id} timeout="auto" unmountOnExit>
-                        <Box margin={1} style={{ paddingBottom: 0, paddingTop: 0 }}>
-                          상세정보 <br />
-                          상세정보 <br />
-                          상세정보 <br />
-                          상세정보 <br />
-                          상세정보 <br />
-                        </Box>
-                      </Collapse>
-                    </TableRow>
+                    {overview && overview.id === theme.id && (
+                      <TableRow>
+                        <TableCell colspan="3">
+                          <MultiLines lines={parseHTML(theme.memo)} />
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </>
                 ))}
               </TableBody>
@@ -200,7 +196,7 @@ export async function getServerSideProps({ query, req, res }) {
 
   const themeList = await getThemeList(page)
     .then((res) => res.data)
-    .catch((e) => e.response.status);
+    .catch((e) => e);
   console.log(themeList);
 
   return {

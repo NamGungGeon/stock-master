@@ -19,7 +19,6 @@ export const login = (username, password) => {
 };
 
 export const getThemeList = (page = 1) => {
-  console.log(`Bearer ${auth.access}`);
   return axios.request({
     url: `/api/themecode/`,
     headers: {

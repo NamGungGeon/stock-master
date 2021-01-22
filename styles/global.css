@@ -10,7 +10,10 @@ body {
 * {
   box-sizing: border-box;
 }
-p.explain {
+div.explain,
+p.explain,
+div.explain p,
+p.explain p {
   color: rgb(96, 96, 96);
   font-size: 0.9rem;
 }
