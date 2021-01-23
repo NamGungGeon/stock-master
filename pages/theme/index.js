@@ -27,6 +27,7 @@ import { toJS } from "mobx";
 import { withAuth } from "../../hoc/withAuth";
 import { parseHTML } from "../../lib/markup";
 import MultiLines from "../../components/MultiLines/MultiLines";
+import ExpandableTableRow from "../../components/ExpandableTableRow/ExpandableTableRow";
 
 const styles = {
   table: {
@@ -111,18 +112,23 @@ const theme = ({ className, themeList }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {themeList.results.map((theme) => (
-                  <>
-                    <TableRow
-                      key={theme.id}
-                      style={styles.tableRow}
-                      onClick={(e) => {
-                        if (overview && theme.id === overview.id) setOverview(null);
-                        else
-                          setOverview({
-                            id: theme.id,
-                          });
-                      }}
+                {themeList.results.map(theme => {
+                  return (
+                    <ExpandableTableRow
+                      moreRow={
+                        <>
+                          <MultiLines lines={parseHTML(theme.memo)} />
+                          <Empty />
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={e => router.push(`/theme/${theme.id}`)}
+                          >
+                            자세히
+                          </Button>
+                        </>
+                      }
+                      colSize={3}
                     >
                       <TableCell component="th" scope="row">
                         {theme.name}
@@ -130,23 +136,16 @@ const theme = ({ className, themeList }) => {
                       <TableCell align="right">{theme.created_date}</TableCell>
                       <TableCell
                         align="right"
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           router.push(`/theme/${theme.id}`);
                         }}
                       >
                         <ArrowForwardIcon />
                       </TableCell>
-                    </TableRow>
-                    {overview && overview.id === theme.id && (
-                      <TableRow>
-                        <TableCell colspan="3">
-                          <MultiLines lines={parseHTML(theme.memo)} />
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </>
-                ))}
+                    </ExpandableTableRow>
+                  );
+                })}
               </TableBody>
             </>
           ) : (
