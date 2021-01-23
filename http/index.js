@@ -44,22 +44,22 @@ export const getThemeEventList = ({ name }) => {
   return axios.request({
     url: `/api/themeevent/`,
     headers: {
-      Authorization: `Bearer ${auth.access}`,
+      Authorization: `Bearer ${auth.access}`
     },
     method: "GET",
-    params: {},
+    params: {}
   });
 };
 
 //테마 내 N등주 날짜별 정리 리스트 반환
-export const getRLThemeEventList = ({ name }) => {
+export const getRLThemeStockList = ({ name }) => {
   return axios.request({
-    url: `/api/themeevent_rl/`,
+    url: `/api/themestock_rl/`,
     headers: {
-      Authorization: `Bearer ${auth.access}`,
+      Authorization: `Bearer ${auth.access}`
     },
     method: "GET",
-    params: { name },
+    params: { name }
   });
 };
 

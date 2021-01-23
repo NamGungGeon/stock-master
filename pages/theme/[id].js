@@ -1,6 +1,6 @@
 import { Chip, Divider, makeStyles } from "@material-ui/core";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect } from "react";
 import Empty from "../../components/Empty/Empty";
 import PageMeta from "../../components/PageMeta/PageMeta";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -11,7 +11,13 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import MainLayout from "../../layout/MainLayout";
-import { getRLThemeEventList, getTheme, getThemeEventList, getThemeRankStockList, getThemeRankStockListByDate } from "../../http";
+import {
+  getRLThemeStockList,
+  getTheme,
+  getThemeEventList,
+  getThemeRankStockList,
+  getThemeRankStockListByDate
+} from "../../http";
 import auth from "../../observables/auth";
 import { toJS } from "mobx";
 import { isError } from "../../lib";
@@ -20,10 +26,21 @@ import MultiLines from "../../components/MultiLines/MultiLines";
 import { withAuth } from "../../hoc/withAuth";
 import { Rating } from "@material-ui/lab";
 import { beautifyDate } from "../../lib/moment";
+import ExpandableTableRow from "../../components/ExpandableTableRow/ExpandableTableRow";
 
-const themeDetail = ({ className, theme, themeEventList, themeRankStockList, themeRankStockListByDate }) => {
+const themeDetail = ({
+  className,
+  theme,
+  themeEventList,
+  themeRankStockList,
+  themeRankStockListByDate,
+  rlThemeStockList
+}) => {
   const router = useRouter();
-  const { id } = router.query;
+
+  useEffect(() => {
+    console.log("themeDetail", theme, themeEventList);
+  }, []);
 
   return (
     <MainLayout className={className}>
@@ -32,9 +49,19 @@ const themeDetail = ({ className, theme, themeEventList, themeRankStockList, the
       <Empty size="large" />
       <Divider light />
       <h2>관련주</h2>
-      <Chip label="삼성전자" color="primary" clickable size="small" style={{ marginRight: "4px" }} />
-      <Chip label="삼성전자" color="primary" clickable size="small" style={{ marginRight: "4px" }} />
-      <Chip label="삼성전자" color="primary" clickable size="small" style={{ marginRight: "4px" }} />
+      <div>
+        {rlThemeStockList.results.map(({ stock }) => {
+          return (
+            <Chip
+              onClick={e => router.push(`/stocks/${stock.id}`)}
+              label={`${stock.name} (${stock.sosok})`}
+              clickable
+              size="small"
+              style={{ marginRight: "4px" }}
+            />
+          );
+        })}
+      </div>
       <Empty size="large" />
       <Divider light />
       <h2>테마 N등주 History</h2>
@@ -42,7 +69,7 @@ const themeDetail = ({ className, theme, themeEventList, themeRankStockList, the
         <TableContainer component={Paper} elevation={0} variant={"outlined"}>
           <Table
             style={{
-              minWidth: "512px",
+              minWidth: "512px"
             }}
             size="small"
             aria-label="a dense table"
@@ -64,7 +91,7 @@ const themeDetail = ({ className, theme, themeEventList, themeRankStockList, the
               </TableRow>
             </TableHead>
             <TableBody>
-              {themeRankStockList.results.map((rank) => {
+              {themeRankStockList.results.map(rank => {
                 const { stock } = rank;
                 return (
                   <TableRow>
@@ -88,7 +115,7 @@ const themeDetail = ({ className, theme, themeEventList, themeRankStockList, the
         <TableContainer component={Paper} elevation={0} variant={"outlined"}>
           <Table
             style={{
-              minWidth: "512px",
+              minWidth: "512px"
             }}
             size="small"
             aria-label="a dense table"
@@ -110,7 +137,7 @@ const themeDetail = ({ className, theme, themeEventList, themeRankStockList, the
               </TableRow>
             </TableHead>
             <TableBody>
-              {themeRankStockListByDate.map((rank) => {
+              {themeRankStockListByDate.map(rank => {
                 return (
                   <TableRow>
                     <TableCell>{rank.created}</TableCell>
@@ -131,7 +158,7 @@ const themeDetail = ({ className, theme, themeEventList, themeRankStockList, the
         <TableContainer component={Paper} elevation={0} variant={"outlined"}>
           <Table
             style={{
-              minWidth: "512px",
+              minWidth: "512px"
             }}
             size="small"
             aria-label="a dense table"
@@ -181,44 +208,46 @@ export async function getServerSideProps({ params, req, res }) {
     return {
       redirect: {
         destination: "/sign/in",
-        permanent: true,
-      },
+        permanent: true
+      }
     };
   const { id } = params;
 
   const theme = await getTheme(id)
-    .then((res) => res.data)
-    .catch((e) => e);
+    .then(res => res.data)
+    .catch(e => e);
   isError(theme, "theme");
 
   const themeEventList = await getThemeEventList({ name: theme.name })
-    .then((res) => res.data)
-    .catch((e) => e);
+    .then(res => res.data)
+    .catch(e => e);
   isError(themeEventList, "themeEventList");
 
-  const rlThemeEventList = await getRLThemeEventList({ name: theme.name })
-    .then((res) => res.data)
-    .catch((e) => e);
-  isError(rlThemeEventList, "rlthemeevent");
+  const rlThemeStockList = await getRLThemeStockList({ name: theme.name })
+    .then(res => res.data)
+    .catch(e => e);
+  isError(rlThemeStockList, "rlthemeevent");
 
   const themeRankStockList = await getThemeRankStockList({ theme: theme.name })
-    .then((res) => res.data)
-    .catch((e) => e);
+    .then(res => res.data)
+    .catch(e => e);
   isError(themeRankStockList, "themeRankStockList");
-  const themeRankStockListByDate = await getThemeRankStockListByDate({ theme: theme.name })
-    .then((res) => res.data)
-    .catch((e) => e);
-  isError(themeRankStockListByDate, "themeRankStockList");
+  const themeRankStockListByDate = await getThemeRankStockListByDate({
+    theme: theme.name
+  })
+    .then(res => res.data)
+    .catch(e => e);
+  isError(themeRankStockListByDate, "themeRankStockListByDate");
 
   return {
     props: {
       theme,
       themeEventList,
-      rlThemeEventList,
+      rlThemeStockList,
       themeRankStockList,
       themeRankStockListByDate,
-      auth: toJS(auth),
-    }, // will be passed to the page component as props
+      auth: toJS(auth)
+    } // will be passed to the page component as props
   };
 }
 
