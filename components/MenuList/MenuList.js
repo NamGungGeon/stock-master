@@ -34,7 +34,7 @@ const MenuList = ({ className, style }) => {
             <ListItemText primary={"홈"} />
           </ListItem>
         </Link>
-        <Divider />
+        <Divider light />
         <Link href="/theme">
           <ListItem button>
             <ListItemText primary={"테마 목록"} />
@@ -45,7 +45,7 @@ const MenuList = ({ className, style }) => {
             <ListItemText primary={"테마 일정"} />
           </ListItem>
         </Link>
-        <Divider />
+        <Divider light />
         <Link href="/stocks">
           <ListItem button>
             <ListItemText primary={"종목 정리"} />
@@ -56,7 +56,7 @@ const MenuList = ({ className, style }) => {
             <ListItemText primary={"종목 일정"} />
           </ListItem>
         </Link>
-        <Divider />
+        <Divider light />
         {auth.isLogined && (
           <Link href="/sign/out">
             <ListItem button>
