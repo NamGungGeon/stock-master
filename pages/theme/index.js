@@ -13,7 +13,7 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import { Box, Collapse, IconButton, Tooltip } from "@material-ui/core";
+import { Box, Button, Collapse, IconButton, Tooltip } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import Empty from "../../components/Empty/Empty";
 import Pagination from "@material-ui/lab/Pagination";
@@ -27,37 +27,37 @@ import { toJS } from "mobx";
 import { withAuth } from "../../hoc/withAuth";
 import { parseHTML } from "../../lib/markup";
 import MultiLines from "../../components/MultiLines/MultiLines";
+import { beautifyDate } from "../../lib/moment";
 import ExpandableTableRow from "../../components/ExpandableTableRow/ExpandableTableRow";
 
 const styles = {
   table: {
-    minWidth: "512px",
+    minWidth: "512px"
   },
   tableRow: {
-    cursor: "pointer",
+    cursor: "pointer"
   },
   form: {
     width: "100%",
     textAlign: "center",
-    alignItems: "flex-end",
+    alignItems: "flex-end"
   },
   formLine: {
     maxWidth: "350px",
     width: "100%",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   formInput: {
-    flex: "1",
-  },
+    flex: "1"
+  }
 };
 
 const theme = ({ className, themeList }) => {
-  const [overview, setOverview] = useState();
   const router = useRouter();
   const [input, handleInput] = useInput({
-    search: "",
+    search: ""
   });
   return (
     <MainLayout className={className}>
@@ -78,14 +78,14 @@ const theme = ({ className, themeList }) => {
             }
           />
           <IconButton
-            onClick={(e) => {
+            onClick={e => {
               router.push({
                 pathname: "/theme",
                 query: {
                   ...router.query,
                   page: 1,
-                  ...input,
-                },
+                  ...input
+                }
               });
             }}
           >
@@ -133,7 +133,9 @@ const theme = ({ className, themeList }) => {
                       <TableCell component="th" scope="row">
                         {theme.name}
                       </TableCell>
-                      <TableCell align="right">{theme.created_date}</TableCell>
+                      <TableCell align="right">
+                        {beautifyDate(theme.created_date)}
+                      </TableCell>
                       <TableCell
                         align="right"
                         onClick={e => {
@@ -172,8 +174,8 @@ const theme = ({ className, themeList }) => {
                 query: {
                   ...router.query,
                   ...input,
-                  page,
-                },
+                  page
+                }
               });
             }}
           />
@@ -187,22 +189,22 @@ export async function getServerSideProps({ query, req, res }) {
     return {
       redirect: {
         destination: "/sign/in",
-        permanent: true,
-      },
+        permanent: true
+      }
     };
 
   const { page = 1 } = query;
 
   const themeList = await getThemeList(page)
-    .then((res) => res.data)
-    .catch((e) => e);
+    .then(res => res.data)
+    .catch(e => e);
   console.log(themeList);
 
   return {
     props: {
       themeList,
-      auth: toJS(auth),
-    }, // will be passed to the page component as props
+      auth: toJS(auth)
+    } // will be passed to the page component as props
   };
 }
 export default withAuth(theme);

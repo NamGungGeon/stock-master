@@ -19,6 +19,7 @@ import { parseHTML } from "../../lib/markup";
 import MultiLines from "../../components/MultiLines/MultiLines";
 import { withAuth } from "../../hoc/withAuth";
 import { Rating } from "@material-ui/lab";
+import { beautifyDate } from "../../lib/moment";
 
 const themeDetail = ({ className, theme, themeEventList, themeRankStockList, themeRankStockListByDate }) => {
   const router = useRouter();
@@ -157,8 +158,8 @@ const themeDetail = ({ className, theme, themeEventList, themeRankStockList, the
                       <Rating readOnly value={event.importance} />
                     </TableCell>
                     <TableCell align="right">
-                      {event.target_date}
-                      <br />~{event.target_end_date}
+                      {beautifyDate(event.target_date)}
+                      <br />~{beautifyDate(event.target_end_date)}
                     </TableCell>
                   </TableRow>
                 );
