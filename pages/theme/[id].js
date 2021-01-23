@@ -150,9 +150,12 @@ const themeDetail = ({ className, theme, themeEventList, themeRankStockList, the
               </TableRow>
             </TableHead>
             <TableBody>
-              {themeEventList.results.map((event) => {
+              {themeEventList.results.map(event => {
                 return (
-                  <TableRow>
+                  <ExpandableTableRow
+                    moreRow={<MultiLines lines={parseHTML(event.memo)} />}
+                    colSize={3}
+                  >
                     <TableCell>{event.name}</TableCell>
                     <TableCell align="right">
                       <Rating readOnly value={event.importance} />
@@ -161,7 +164,7 @@ const themeDetail = ({ className, theme, themeEventList, themeRankStockList, the
                       {beautifyDate(event.target_date)}
                       <br />~{beautifyDate(event.target_end_date)}
                     </TableCell>
-                  </TableRow>
+                  </ExpandableTableRow>
                 );
               })}
             </TableBody>
