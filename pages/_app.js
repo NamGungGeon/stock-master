@@ -12,8 +12,8 @@ import loadAuth from "../lib/loadAuth";
 const theme = createMuiTheme({
   palette: {
     primary: blue,
-    secondary: pink,
-  },
+    secondary: pink
+  }
 });
 
 function MyApp({ Component, pageProps }) {
@@ -25,7 +25,7 @@ function MyApp({ Component, pageProps }) {
     </>
   );
 }
-MyApp.getInitialProps = async (appContext) => {
+MyApp.getInitialProps = async appContext => {
   // calls page's `getInitialProps` and fills `appProps.pageProps`
   await loadAuth(appContext.ctx);
   const appProps = await App.getInitialProps(appContext);

@@ -25,26 +25,26 @@ import { withAuth } from "../../hoc/withAuth";
 
 const styles = {
   table: {
-    minWidth: "512px",
+    minWidth: "512px"
   },
   tableRow: {
-    cursor: "pointer",
+    cursor: "pointer"
   },
   form: {
     width: "100%",
     textAlign: "center",
-    alignItems: "flex-end",
+    alignItems: "flex-end"
   },
   formLine: {
     maxWidth: "350px",
     width: "100%",
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   formInput: {
-    flex: "1",
-  },
+    flex: "1"
+  }
 };
 
 const Searcher = () => {
@@ -60,7 +60,7 @@ const Searcher = () => {
             defaultValue="2020-01-01"
             style={styles.formInput}
             InputLabelProps={{
-              shrink: true,
+              shrink: true
             }}
           />
           <TextField
@@ -71,7 +71,7 @@ const Searcher = () => {
             defaultValue="2020-03-31"
             style={styles.formInput}
             InputLabelProps={{
-              shrink: true,
+              shrink: true
             }}
           />
         </div>
@@ -144,8 +144,8 @@ const event = () => {
               pathname: `/theme/event`,
               query: {
                 ...router.query,
-                page,
-              },
+                page
+              }
             });
           }}
         />
@@ -159,14 +159,14 @@ export async function getServerSideProps({ query, req, res }) {
     return {
       redirect: {
         destination: "/sign/in",
-        permanent: true,
-      },
+        permanent: true
+      }
     };
 
   return {
     props: {
-      auth: toJS(auth),
-    }, // will be passed to the page component as props
+      auth: toJS(auth)
+    } // will be passed to the page component as props
   };
 }
 

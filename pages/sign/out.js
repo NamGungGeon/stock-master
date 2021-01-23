@@ -18,7 +18,7 @@ export const getServerSideProps = async function({ req, res }) {
   auth.set();
 
   return {
-    props: {},
+    props: {}
   };
 };
 

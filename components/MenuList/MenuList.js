@@ -1,4 +1,17 @@
-import { AppBar, Menu, MenuItem, Toolbar, makeStyles, ListItem, ListItemIcon, ListItemAvatar, Avatar, ListItemText, List, Divider } from "@material-ui/core";
+import {
+  AppBar,
+  Menu,
+  MenuItem,
+  Toolbar,
+  makeStyles,
+  ListItem,
+  ListItemIcon,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  List,
+  Divider
+} from "@material-ui/core";
 import FolderIcon from "@material-ui/icons/Folder";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -15,7 +28,7 @@ const MenuList = ({ className, style }) => {
     <div
       className={className}
       style={{
-        width: "256px",
+        width: "256px"
       }}
     >
       {/* <AppBar

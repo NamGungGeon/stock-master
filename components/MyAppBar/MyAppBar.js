@@ -10,16 +10,16 @@ import MenuList from "../MenuList/MenuList";
 import { observer } from "mobx-react-lite";
 import { useRouter } from "next/router";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1,
+    flexGrow: 1
   },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(2)
   },
   title: {
-    flexGrow: 1,
-  },
+    flexGrow: 1
+  }
 }));
 
 const MyAppBar = () => {
@@ -31,7 +31,7 @@ const MyAppBar = () => {
     <AppBar position="static">
       <Toolbar>
         <IconButton
-          onClick={(e) => {
+          onClick={e => {
             setOpenDrawer(true);
           }}
           edge="start"
@@ -48,9 +48,9 @@ const MyAppBar = () => {
             height="42"
             style={{
               filter: "invert(1)",
-              cursor: "pointer",
+              cursor: "pointer"
             }}
-            onClick={(e) => {
+            onClick={e => {
               router.push("/");
             }}
           />
@@ -59,7 +59,7 @@ const MyAppBar = () => {
       <Drawer
         anchor="left"
         open={openDrawer}
-        onClose={(e) => {
+        onClose={e => {
           setOpenDrawer(false);
         }}
       >

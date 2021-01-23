@@ -5,8 +5,8 @@ const MultiLines = ({ lines, style, className }) => {
     <div style={style} className={className}>
       {lines
         .split("\n")
-        .filter((line) => line)
-        .map((line) => {
+        .filter(line => line)
+        .map(line => {
           return (
             <p className="explain" key={line}>
               {line}

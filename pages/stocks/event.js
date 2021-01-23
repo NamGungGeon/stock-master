@@ -18,14 +18,14 @@ export async function getServerSideProps({ query, req, res }) {
     return {
       redirect: {
         destination: "/sign/in",
-        permanent: true,
-      },
+        permanent: true
+      }
     };
 
   return {
     props: {
-      auth: toJS(auth),
-    }, // will be passed to the page component as props
+      auth: toJS(auth)
+    } // will be passed to the page component as props
   };
 }
 export default withAuth(event);

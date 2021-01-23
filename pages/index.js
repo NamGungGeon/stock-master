@@ -17,7 +17,9 @@ function Home({ className }) {
         body {
           padding: 0;
           margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
+            sans-serif;
         }
 
         * {
@@ -34,13 +36,13 @@ export const getServerSideProps = async function({ req, res }) {
     return {
       redirect: {
         destination: "/sign/in",
-        permanent: true,
-      },
+        permanent: true
+      }
     };
 
   return {
     props: {
-      auth: toJS(auth),
-    },
+      auth: toJS(auth)
+    }
   };
 };

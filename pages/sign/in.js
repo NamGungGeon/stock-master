@@ -18,8 +18,8 @@ import MainLayout from "../../layout/MainLayout";
 const styles = {
   form: {
     maxWidth: "512px",
-    width: "100%",
-  },
+    width: "100%"
+  }
 };
 
 const signin = ({ message }) => {
@@ -39,10 +39,13 @@ const signin = ({ message }) => {
   return (
     <MainLayout
       style={{
-        maxWidth: "320px",
+        maxWidth: "320px"
       }}
     >
-      <PageMeta title="로그인" description="사이트를 이용하시라면 로그인하세요" />
+      <PageMeta
+        title="로그인"
+        description="사이트를 이용하시라면 로그인하세요"
+      />
       <Empty size="large" />
       <form action="/sign/in" method="POST">
         <FormGroup style={styles.form}>
@@ -98,17 +101,17 @@ export const getServerSideProps = async function({ req, res }) {
       return {
         redirect: {
           destination: "/sign/in",
-          permanent: false,
-        },
+          permanent: false
+        }
       };
     }
 
     const tokens = await login(id, pw)
-      .then((res) => {
+      .then(res => {
         console.log("auth", res.data);
         return res.data;
       })
-      .catch((e) => {
+      .catch(e => {
         if (e.response) console.error(e.response.status, e.response.data);
         else console.error(e);
 
@@ -121,14 +124,14 @@ export const getServerSideProps = async function({ req, res }) {
       return {
         redirect: {
           destination: "/",
-          permanent: true,
-        },
+          permanent: true
+        }
       };
     }
     return {
       props: {
-        message: "아이디와 비밀번호를 다시 확인하세요",
-      },
+        message: "아이디와 비밀번호를 다시 확인하세요"
+      }
     };
   } else {
     const tokens = req.session.auth;
@@ -138,13 +141,13 @@ export const getServerSideProps = async function({ req, res }) {
       return {
         redirect: {
           destination: "/",
-          permanent: true,
-        },
+          permanent: true
+        }
       };
     }
 
     return {
-      props: {},
+      props: {}
     };
   }
 };
