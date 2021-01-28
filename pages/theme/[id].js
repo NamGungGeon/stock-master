@@ -14,7 +14,7 @@ import MainLayout from "../../layout/MainLayout";
 import {
   getThemeRelativeStockList,
   getTheme,
-  getThemeEventList,
+  getThemeRelativeEventList,
   getThemeRankStockList,
   getThemeRankStockListByDate
 } from "../../http";
@@ -166,7 +166,7 @@ const themeDetail = ({
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <h3>종목 이름</h3>
+                  <h3>일정 내용</h3>
                 </TableCell>
                 <TableCell align="right">
                   <h3>중요도</h3>
@@ -177,7 +177,7 @@ const themeDetail = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {themeEventList.results.map(event => {
+              {themeEventList.results.map(({ event }) => {
                 return (
                   <ExpandableTableRow
                     moreRow={<MultiLines lines={parseHTML(event.memo)} />}
@@ -218,7 +218,7 @@ export async function getServerSideProps({ params, req, res }) {
     .catch(e => e);
   isError(theme, "theme");
 
-  const themeEventList = await getThemeEventList({ name: theme.name })
+  const themeEventList = await getThemeRelativeEventList({ theme: theme.name })
     .then(res => res.data)
     .catch(e => e);
   isError(themeEventList, "themeEventList");
@@ -228,7 +228,7 @@ export async function getServerSideProps({ params, req, res }) {
   })
     .then(res => res.data)
     .catch(e => e);
-  isError(relativeStockList, "rlthemeevent");
+  isError(relativeStockList, "relativeStockList");
 
   const themeRankStockList = await getThemeRankStockList({ theme: theme.name })
     .then(res => res.data)

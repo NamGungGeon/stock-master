@@ -40,14 +40,14 @@ export const getTheme = id => {
   });
 };
 
-export const getThemeEventList = ({ name }) => {
+export const getThemeRelativeEventList = ({ theme }) => {
   return axios.request({
-    url: `/api/themeevent/`,
+    url: `/api/themeevent_rl/`,
     headers: {
       Authorization: `Bearer ${auth.access}`
     },
     method: "GET",
-    params: { name }
+    params: { theme }
   });
 };
 
