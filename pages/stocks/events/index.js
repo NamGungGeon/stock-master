@@ -1,9 +1,9 @@
 import { toJS } from "mobx";
 import React from "react";
-import PageMeta from "../../components/PageMeta/PageMeta";
-import { withAuth } from "../../hoc/withAuth";
-import MainLayout from "../../layout/MainLayout";
-import auth from "../../observables/auth";
+import PageMeta from "../../../components/PageMeta/PageMeta";
+import { withAuth } from "../../../hoc/withAuth";
+import MainLayout from "../../../layout/MainLayout";
+import auth from "../../../observables/auth";
 
 const event = () => {
   return (

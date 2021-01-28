@@ -64,7 +64,7 @@ const MenuList = ({ className, style }) => {
             <ListItemText primary={"종목 정리"} />
           </ListItem>
         </Link>
-        <Link href="/stocks/event">
+        <Link href="/stocks/events">
           <ListItem button>
             <ListItemText primary={"종목 일정"} />
           </ListItem>
