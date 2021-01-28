@@ -57,7 +57,7 @@ const themeDetail = ({
               label={`${stock.name} (${stock.sosok})`}
               clickable
               size="small"
-              style={{ marginRight: "4px" }}
+              style={{ marginRight: "4px", marginBottom: "4px" }}
             />
           );
         })}
@@ -223,7 +223,7 @@ export async function getServerSideProps({ params, req, res }) {
     .catch(e => e);
   isError(themeEventList, "themeEventList");
 
-  const rlThemeStockList = await getRLThemeStockList({ name: theme.name })
+  const rlThemeStockList = await getRLThemeStockList({ theme: theme.name })
     .then(res => res.data)
     .catch(e => e);
   isError(rlThemeStockList, "rlthemeevent");
