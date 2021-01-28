@@ -4,7 +4,7 @@ import auth from "../observables/auth";
 const host = "http://125.141.133.134:898";
 axios.defaults.baseURL = host;
 axios.defaults.headers = {
-  "Content-type": "application/json",
+  "Content-type": "application/json"
 };
 
 export const login = (username, password) => {
@@ -13,8 +13,8 @@ export const login = (username, password) => {
     method: "POST",
     data: {
       username,
-      password,
-    },
+      password
+    }
   });
 };
 
@@ -22,21 +22,21 @@ export const getThemeList = (page = 1) => {
   return axios.request({
     url: `/api/themecode/`,
     headers: {
-      Authorization: `Bearer ${auth.access}`,
+      Authorization: `Bearer ${auth.access}`
     },
     method: "GET",
     params: {
-      page,
-    },
+      page
+    }
   });
 };
-export const getTheme = (id) => {
+export const getTheme = id => {
   return axios.request({
     url: `/api/themecode/${id}/`,
     headers: {
-      Authorization: `Bearer ${auth.access}`,
+      Authorization: `Bearer ${auth.access}`
     },
-    method: "GET",
+    method: "GET"
   });
 };
 
@@ -47,7 +47,7 @@ export const getThemeEventList = ({ name }) => {
       Authorization: `Bearer ${auth.access}`
     },
     method: "GET",
-    params: {}
+    params: { name }
   });
 };
 
@@ -66,19 +66,19 @@ export const getThemeRankStockListByDate = ({ theme }) => {
   return axios.request({
     url: `/api/themestock_rh/summary_by_date/`,
     headers: {
-      Authorization: `Bearer ${auth.access}`,
+      Authorization: `Bearer ${auth.access}`
     },
     method: "GET",
-    params: { theme },
+    params: { theme }
   });
 };
 export const getThemeRankStockList = ({ theme }) => {
   return axios.request({
     url: `/api/themestock_rh/`,
     headers: {
-      Authorization: `Bearer ${auth.access}`,
+      Authorization: `Bearer ${auth.access}`
     },
     method: "GET",
-    params: { theme },
+    params: { theme }
   });
 };
