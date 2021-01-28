@@ -1,7 +1,4 @@
 import React from "react";
-import Empty from "../../components/Empty/Empty";
-import PageMeta from "../../components/PageMeta/PageMeta";
-import MainLayout from "../../layout/MainLayout";
 
 import FormControl from "@material-ui/core/FormControl";
 import Input from "@material-ui/core/Input";
@@ -19,9 +16,12 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import Pagination from "@material-ui/lab/Pagination";
 import { useRouter } from "next/router";
-import auth from "../../observables/auth";
 import { toJS } from "mobx";
-import { withAuth } from "../../hoc/withAuth";
+import MainLayout from "../../../layout/MainLayout";
+import PageMeta from "../../../components/PageMeta/PageMeta";
+import Empty from "../../../components/Empty/Empty";
+import auth from "../../../observables/auth";
+import { withAuth } from "../../../hoc/withAuth";
 
 const styles = {
   table: {
@@ -95,7 +95,7 @@ const Searcher = () => {
     </form>
   );
 };
-const event = () => {
+const events = () => {
   const router = useRouter();
   return (
     <MainLayout>
@@ -170,4 +170,4 @@ export async function getServerSideProps({ query, req, res }) {
   };
 }
 
-export default withAuth(event);
+export default withAuth(events);

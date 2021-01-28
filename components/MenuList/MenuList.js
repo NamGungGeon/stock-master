@@ -53,7 +53,7 @@ const MenuList = ({ className, style }) => {
             <ListItemText primary={"테마 목록"} />
           </ListItem>
         </Link>
-        <Link href="/theme/event">
+        <Link href="/theme/events">
           <ListItem button>
             <ListItemText primary={"테마 일정"} />
           </ListItem>
