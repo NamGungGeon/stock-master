@@ -162,7 +162,7 @@ const theme = ({ className, themeList }) => {
         </Table>
       </TableContainer>
       <Empty size={"large"} />
-      {!!themeList.length && (
+      {themeList.total_pages > 1 && (
         <div className={"flex align center"}>
           <Pagination
             color={"primary"}
