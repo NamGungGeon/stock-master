@@ -12,7 +12,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import MainLayout from "../../layout/MainLayout";
 import {
-  getRLThemeStockList,
+  getThemeRelativeStockList,
   getTheme,
   getThemeEventList,
   getThemeRankStockList,
@@ -34,7 +34,7 @@ const themeDetail = ({
   themeEventList,
   themeRankStockList,
   themeRankStockListByDate,
-  rlThemeStockList
+  relativeStockList
 }) => {
   const router = useRouter();
 
@@ -50,7 +50,7 @@ const themeDetail = ({
       <Divider light />
       <h2>관련주</h2>
       <div>
-        {rlThemeStockList.results.map(({ stock }) => {
+        {relativeStockList.results.map(({ stock }) => {
           return (
             <Chip
               onClick={e => router.push(`/stocks/${stock.id}`)}
@@ -223,10 +223,12 @@ export async function getServerSideProps({ params, req, res }) {
     .catch(e => e);
   isError(themeEventList, "themeEventList");
 
-  const rlThemeStockList = await getRLThemeStockList({ theme: theme.name })
+  const relativeStockList = await getThemeRelativeStockList({
+    theme: theme.name
+  })
     .then(res => res.data)
     .catch(e => e);
-  isError(rlThemeStockList, "rlthemeevent");
+  isError(relativeStockList, "rlthemeevent");
 
   const themeRankStockList = await getThemeRankStockList({ theme: theme.name })
     .then(res => res.data)
@@ -243,7 +245,7 @@ export async function getServerSideProps({ params, req, res }) {
     props: {
       theme,
       themeEventList,
-      rlThemeStockList,
+      relativeStockList,
       themeRankStockList,
       themeRankStockListByDate,
       auth: toJS(auth)

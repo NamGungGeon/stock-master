@@ -51,7 +51,7 @@ export const getThemeEventList = ({ name }) => {
   });
 };
 
-export const getRLThemeStockList = ({ theme }) => {
+export const getThemeRelativeStockList = ({ theme }) => {
   return axios.request({
     url: `/api/themestock_rl/`,
     headers: {
