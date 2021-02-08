@@ -19,6 +19,7 @@
     "moment": "^2.29.1",
     "next": "^10.0.0",
     "next-session": "^3.4.0",
+    "prop-types": "^15.7.2",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "urlencoded-body-parser": "^3.0.0"

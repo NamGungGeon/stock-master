@@ -27,6 +27,7 @@ import { withAuth } from "../../hoc/withAuth";
 import { Rating } from "@material-ui/lab";
 import { beautifyDate } from "../../lib/moment";
 import ExpandableTableRow from "../../components/ExpandableTableRow/ExpandableTableRow";
+import EmptySafeZone from "../../components/EmptySafeZone/EmptySafeZone";
 
 const themeDetail = ({
   className,
@@ -49,7 +50,7 @@ const themeDetail = ({
       <Empty size="large" />
       <Divider light />
       <h2>관련주</h2>
-      <div>
+      <EmptySafeZone data={relativeStockList.results}>
         {relativeStockList.results.map(({ stock }) => {
           return (
             <Chip
@@ -61,11 +62,11 @@ const themeDetail = ({
             />
           );
         })}
-      </div>
+      </EmptySafeZone>
       <Empty size="large" />
       <Divider light />
       <h2>테마 N등주 History</h2>
-      <div>
+      <EmptySafeZone data={themeRankStockList.results}>
         <TableContainer component={Paper} elevation={0} variant={"outlined"}>
           <Table
             style={{
@@ -107,96 +108,107 @@ const themeDetail = ({
             </TableBody>
           </Table>
         </TableContainer>
-      </div>
+      </EmptySafeZone>
       <Empty size="large" />
       <Divider light />
       <div>
         <h2>날짜별 N등주</h2>
-        <TableContainer component={Paper} elevation={0} variant={"outlined"}>
-          <Table
-            style={{
-              minWidth: "512px"
-            }}
-            size="small"
-            aria-label="a dense table"
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <h3>날짜</h3>
-                </TableCell>
-                <TableCell align="right">
-                  <h3>1등주</h3>
-                </TableCell>
-                <TableCell align="right">
-                  <h3>2등주</h3>
-                </TableCell>
-                <TableCell align="right">
-                  <h3>3등주</h3>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {themeRankStockListByDate.map(rank => {
-                return (
-                  <TableRow>
-                    <TableCell>{rank.created}</TableCell>
-                    <TableCell align="right">{rank.rank_1st || "-"}</TableCell>
-                    <TableCell align="right">{rank.rank_2nd || "-"}</TableCell>
-                    <TableCell align="right">{rank.rank_3th || "-"}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <EmptySafeZone data={themeRankStockListByDate}>
+          <TableContainer component={Paper} elevation={0} variant={"outlined"}>
+            <Table
+              style={{
+                minWidth: "512px"
+              }}
+              size="small"
+              aria-label="a dense table"
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <h3>날짜</h3>
+                  </TableCell>
+                  <TableCell align="right">
+                    <h3>1등주</h3>
+                  </TableCell>
+                  <TableCell align="right">
+                    <h3>2등주</h3>
+                  </TableCell>
+                  <TableCell align="right">
+                    <h3>3등주</h3>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {themeRankStockListByDate.map(rank => {
+                  return (
+                    <TableRow>
+                      <TableCell>{rank.created}</TableCell>
+                      <TableCell align="right">
+                        {rank.rank_1st || "-"}
+                      </TableCell>
+                      <TableCell align="right">
+                        {rank.rank_2nd || "-"}
+                      </TableCell>
+                      <TableCell align="right">
+                        {rank.rank_3th || "-"}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </EmptySafeZone>
       </div>
       <Empty size="large" />
       <Divider light />
       <div>
         <h2>테마 일정</h2>
-        <TableContainer component={Paper} elevation={0} variant={"outlined"}>
-          <Table
-            style={{
-              minWidth: "512px"
-            }}
-            size="small"
-            aria-label="a dense table"
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <h3>일정 내용</h3>
-                </TableCell>
-                <TableCell align="right">
-                  <h3>중요도</h3>
-                </TableCell>
-                <TableCell align="right">
-                  <h3>날짜</h3>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {themeEventList.results.map(({ event }) => {
-                return (
-                  <ExpandableTableRow
-                    moreRow={<MultiLines lines={parseHTML(event.memo)} />}
-                    colSize={3}
-                  >
-                    <TableCell>{event.name}</TableCell>
-                    <TableCell align="right">
-                      <Rating readOnly value={event.importance} />
-                    </TableCell>
-                    <TableCell align="right">
-                      {beautifyDate(event.target_date)}
-                      <br />~{beautifyDate(event.target_end_date)}
-                    </TableCell>
-                  </ExpandableTableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+
+        <EmptySafeZone data={themeEventList.results}>
+          <TableContainer component={Paper} elevation={0} variant={"outlined"}>
+            <Table
+              style={{
+                minWidth: "512px"
+              }}
+              size="small"
+              aria-label="a dense table"
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <h3>일정 내용</h3>
+                  </TableCell>
+                  <TableCell align="right">
+                    <h3>중요도</h3>
+                  </TableCell>
+                  <TableCell align="right">
+                    <h3>날짜</h3>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {themeEventList.results.map(({ event }) => {
+                  return (
+                    <ExpandableTableRow
+                      moreRow={<MultiLines lines={parseHTML(event.memo)} />}
+                      colSize={3}
+                    >
+                      <TableCell>{event.name}</TableCell>
+                      <TableCell align="right">
+                        <Rating readOnly value={event.importance} />
+                      </TableCell>
+                      <TableCell align="right">
+                        {beautifyDate(event.target_date)}
+                        <br />~{beautifyDate(event.target_end_date)}
+                      </TableCell>
+                    </ExpandableTableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </EmptySafeZone>
       </div>
       <Empty size="large" />
     </MainLayout>

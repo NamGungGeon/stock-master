@@ -29,6 +29,7 @@ import { parseHTML } from "../../lib/markup";
 import MultiLines from "../../components/MultiLines/MultiLines";
 import { beautifyDate } from "../../lib/moment";
 import ExpandableTableRow from "../../components/ExpandableTableRow/ExpandableTableRow";
+import EmptySafeZone from "../../components/EmptySafeZone/EmptySafeZone";
 
 const styles = {
   table: {
@@ -54,11 +55,17 @@ const styles = {
   }
 };
 
-const theme = ({ className, themeList }) => {
+const theme = ({ className, query, themeList }) => {
   const router = useRouter();
-  const [input, handleInput] = useInput({
+  const [input, handleInput, setInput] = useInput({
     search: ""
   });
+  useEffect(() => {
+    if (query && query.search)
+      setInput({
+        search: query.search
+      });
+  }, [query]);
   return (
     <MainLayout className={className}>
       <PageMeta title={"테마 정보"} description={"테마 정보"} />
@@ -94,93 +101,91 @@ const theme = ({ className, themeList }) => {
         </div>
       </FormControl>
       <Empty />
-      <TableContainer component={Paper} elevation={0} variant={"outlined"}>
-        <Table style={styles.table} size="small" aria-label="a dense table">
-          {themeList.results.length ? (
-            <>
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <h3>테마 이름</h3>
-                  </TableCell>
-                  <TableCell align="right">
-                    <h3>생성일자</h3>
-                  </TableCell>
-                  <TableCell align="right">
-                    <h3>자세히</h3>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {themeList.results.map(theme => {
-                  return (
-                    <ExpandableTableRow
-                      moreRow={
-                        <>
-                          <MultiLines lines={parseHTML(theme.memo)} />
-                          <Empty />
-                          <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={e => router.push(`/theme/${theme.id}`)}
-                          >
-                            자세히
-                          </Button>
-                        </>
-                      }
-                      colSize={3}
+      <EmptySafeZone
+        data={themeList.results}
+        renderWhenEmpty={() => (
+          <div>
+            <Empty />
+            <p className={"align center explain"}>찾으시는 종목이 없습니다</p>
+          </div>
+        )}
+      >
+        <TableContainer component={Paper} elevation={0} variant={"outlined"}>
+          <Table style={styles.table} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <h3>테마 이름</h3>
+                </TableCell>
+                <TableCell align="right">
+                  <h3>생성일자</h3>
+                </TableCell>
+                <TableCell align="right">
+                  <h3>자세히</h3>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {themeList.results.map(theme => {
+                return (
+                  <ExpandableTableRow
+                    moreRow={
+                      <>
+                        <MultiLines lines={parseHTML(theme.memo)} />
+                        <Empty />
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={e => router.push(`/theme/${theme.id}`)}
+                        >
+                          자세히
+                        </Button>
+                      </>
+                    }
+                    colSize={3}
+                  >
+                    <TableCell component="th" scope="row">
+                      {theme.name}
+                    </TableCell>
+                    <TableCell align="right">
+                      {beautifyDate(theme.created_date)}
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      onClick={e => {
+                        e.stopPropagation();
+                        router.push(`/theme/${theme.id}`);
+                      }}
                     >
-                      <TableCell component="th" scope="row">
-                        {theme.name}
-                      </TableCell>
-                      <TableCell align="right">
-                        {beautifyDate(theme.created_date)}
-                      </TableCell>
-                      <TableCell
-                        align="right"
-                        onClick={e => {
-                          e.stopPropagation();
-                          router.push(`/theme/${theme.id}`);
-                        }}
-                      >
-                        <ArrowForwardIcon />
-                      </TableCell>
-                    </ExpandableTableRow>
-                  );
-                })}
-              </TableBody>
-            </>
-          ) : (
-            <TableRow>
-              <TableCell colspan="3">
-                <div className="flex align center" style={{ height: "128px" }}>
-                  <p className="explain">찾으시는 종목이 없습니다</p>
-                </div>
-              </TableCell>
-            </TableRow>
-          )}
-        </Table>
-      </TableContainer>
-      <Empty size={"large"} />
-      {themeList.total_pages > 1 && (
-        <div className={"flex align center"}>
-          <Pagination
-            color={"primary"}
-            count={themeList.total_pages}
-            page={parseInt(router.query.page ?? 1)}
-            onChange={(e, page) => {
-              router.push({
-                pathname: `./theme`,
-                query: {
-                  ...router.query,
-                  ...input,
-                  page
-                }
-              });
-            }}
-          />
-        </div>
-      )}
+                      <ArrowForwardIcon />
+                    </TableCell>
+                  </ExpandableTableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Empty size={"large"} />
+        {themeList.total_pages > 1 && (
+          <div className={"flex align center"}>
+            <Pagination
+              color={"primary"}
+              count={themeList.total_pages}
+              page={parseInt(router.query.page ?? 1)}
+              onChange={(e, page) => {
+                router.push({
+                  pathname: `./theme`,
+                  query: {
+                    ...router.query,
+                    ...input,
+                    page
+                  }
+                });
+              }}
+            />
+          </div>
+        )}
+      </EmptySafeZone>
     </MainLayout>
   );
 };
@@ -193,17 +198,19 @@ export async function getServerSideProps({ query, req, res }) {
       }
     };
 
-  const { page = 1 } = query;
+  const { page = 1, search } = query;
 
-  const themeList = await getThemeList(page)
+  const themeList = await getThemeList({ page, name: search })
     .then(res => res.data)
     .catch(e => e);
   console.log(themeList);
 
+  console.log(query);
   return {
     props: {
       themeList,
-      auth: toJS(auth)
+      auth: toJS(auth),
+      query
     } // will be passed to the page component as props
   };
 }

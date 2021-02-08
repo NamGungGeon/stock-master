@@ -18,7 +18,7 @@ export const login = (username, password) => {
   });
 };
 
-export const getThemeList = (page = 1) => {
+export const getThemeList = ({ page = 1, name }) => {
   return axios.request({
     url: `/api/themecode/`,
     headers: {
@@ -26,7 +26,8 @@ export const getThemeList = (page = 1) => {
     },
     method: "GET",
     params: {
-      page
+      page,
+      name
     }
   });
 };
