@@ -7,6 +7,25 @@ axios.defaults.headers = {
   "Content-type": "application/json"
 };
 
+export const verifyToken = () => {
+  return axios.request({
+    url: `/api/token/verify/`,
+    method: "POST",
+    data: {
+      access: auth.access
+    }
+  });
+};
+export const refreshToken = () => {
+  return axios.request({
+    url: `/api/token/refresh/`,
+    method: "POST",
+    data: {
+      refresh: auth.refresh
+    }
+  });
+};
+
 export const login = (username, password) => {
   return axios.request({
     url: `/api/token/`,
