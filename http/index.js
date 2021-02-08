@@ -83,3 +83,18 @@ export const getThemeRankStockList = ({ theme }) => {
     params: { theme }
   });
 };
+
+export const getStockList = ({ code, name, page }) => {
+  return axios.request({
+    url: `/api/stockcode/`,
+    headers: {
+      Authorization: `Bearer ${auth.access}`
+    },
+    method: "GET",
+    params: { code, name, page }
+  });
+};
+
+export const getAxiosResult = axiosPromise => {
+  return axiosPromise.then(res => res.data).catch(e => e);
+};
