@@ -12,7 +12,7 @@ export const verifyToken = () => {
     url: `/api/token/verify/`,
     method: "POST",
     data: {
-      access: auth.access
+      token: auth.access
     }
   });
 };
