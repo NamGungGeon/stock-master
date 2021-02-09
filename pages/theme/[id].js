@@ -28,6 +28,7 @@ import { Rating } from "@material-ui/lab";
 import { beautifyDate } from "../../lib/moment";
 import ExpandableTableRow from "../../components/ExpandableTableRow/ExpandableTableRow";
 import EmptySafeZone from "../../components/EmptySafeZone/EmptySafeZone";
+import ThemeEventList from "../../containers/ThemeEventList/ThemeEventList";
 
 const themeDetail = ({
   className,
@@ -164,51 +165,14 @@ const themeDetail = ({
       <Divider light />
       <div>
         <h2>테마 일정</h2>
-
-        <EmptySafeZone data={themeEventList.results}>
-          <TableContainer component={Paper} elevation={0} variant={"outlined"}>
-            <Table
-              style={{
-                minWidth: "512px"
-              }}
-              size="small"
-              aria-label="a dense table"
-            >
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <h3>일정 내용</h3>
-                  </TableCell>
-                  <TableCell align="right">
-                    <h3>중요도</h3>
-                  </TableCell>
-                  <TableCell align="right">
-                    <h3>날짜</h3>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {themeEventList.results.map(({ event }) => {
-                  return (
-                    <ExpandableTableRow
-                      moreRow={<MultiLines lines={parseHTML(event.memo)} />}
-                      colSize={3}
-                    >
-                      <TableCell>{event.name}</TableCell>
-                      <TableCell align="right">
-                        <Rating readOnly value={event.importance} />
-                      </TableCell>
-                      <TableCell align="right">
-                        {beautifyDate(event.target_date)}
-                        <br />~{beautifyDate(event.target_end_date)}
-                      </TableCell>
-                    </ExpandableTableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </EmptySafeZone>
+        <ThemeEventList
+          themeEventList={(() => {
+            return {
+              ...themeEventList,
+              results: themeEventList.results.map(event => event.event)
+            };
+          })()}
+        />
       </div>
       <Empty size="large" />
     </MainLayout>

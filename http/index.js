@@ -67,7 +67,7 @@ export const getThemeRelativeEventList = ({ theme }) => {
       Authorization: `Bearer ${auth.access}`
     },
     method: "GET",
-    params: { theme }
+    params: {}
   });
 };
 export const getThemeEventList = ({
