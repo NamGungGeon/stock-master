@@ -10,14 +10,25 @@ import { toJS } from "mobx";
 import { withAuth } from "../../hoc/withAuth";
 import ThemeList from "../../containers/ThemeList/ThemeList";
 import TextSearcher from "../../components/Searcher/TextSearcher";
+import { useInput } from "../../hooks";
 
 const theme = ({ className, query, themeList }) => {
   const router = useRouter();
+  const [input, handleInput, setInput] = useInput({
+    search: ""
+  });
+  useEffect(() => {
+    if (query && query.search)
+      setInput({
+        search: query.search
+      });
+  }, [query]);
   return (
     <MainLayout className={className}>
       <PageMeta title={"테마 정보"} description={"테마 정보"} />
       <TextSearcher
-        value={query ? query.search : ""}
+        search={input.search}
+        handleSearch={handleInput}
         placeholder={"검색하실 테마를 입력하세요"}
         submit={search => {
           router.push(`/theme?search=${search}`);

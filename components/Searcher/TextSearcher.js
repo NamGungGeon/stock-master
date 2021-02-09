@@ -8,12 +8,6 @@ import SearchIcon from "@material-ui/icons/Search";
 import { useInput } from "../../hooks";
 
 const styles = {
-  table: {
-    minWidth: "512px"
-  },
-  tableRow: {
-    cursor: "pointer"
-  },
   form: {
     width: "100%",
     textAlign: "center",
@@ -30,27 +24,18 @@ const styles = {
     flex: "1"
   }
 };
-const TextSearcher = ({ placeholder, value, submit = value => {} }) => {
-  const [input, handleInput, setInput] = useInput({
-    search: ""
-  });
-  useEffect(() => {
-    if (value)
-      setInput({
-        search: value
-      });
-  }, [value]);
+const TextSearcher = ({ placeholder, submit, search, handleSearch }) => {
   return (
     <FormControl style={styles.form}>
       <div style={styles.formLine}>
         <Input
-          value={input.search}
-          onChange={handleInput}
+          value={search}
+          onChange={handleSearch}
           name={"search"}
           style={styles.formInput}
           placeholder={placeholder}
           onKeyDown={e => {
-            if (e.key === "Enter") submit(input.search);
+            if (e.key === "Enter" && submit) submit(search);
           }}
           startAdornment={
             <InputAdornment position="start">
@@ -58,13 +43,15 @@ const TextSearcher = ({ placeholder, value, submit = value => {} }) => {
             </InputAdornment>
           }
         />
-        <IconButton
-          onClick={e => {
-            submit(input.search);
-          }}
-        >
-          <SearchIcon />
-        </IconButton>
+        {submit && (
+          <IconButton
+            onClick={e => {
+              if (submit) submit(search);
+            }}
+          >
+            <SearchIcon />
+          </IconButton>
+        )}
       </div>
     </FormControl>
   );
