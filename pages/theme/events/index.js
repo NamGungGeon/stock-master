@@ -24,6 +24,15 @@ import auth from "../../../observables/auth";
 import { withAuth } from "../../../hoc/withAuth";
 import DateRangeSearcher from "../../../components/Searcher/DateRangeSearcher";
 import { useInput } from "../../../hooks";
+import TextSearcher from "../../../components/Searcher/TextSearcher";
+import { getAxiosResult, getThemeEventList } from "../../../http";
+import { isError } from "../../../lib";
+import EmptySafeZone from "../../../components/EmptySafeZone/EmptySafeZone";
+import { beautifyDate } from "../../../lib/moment";
+import MultiLines from "../../../components/MultiLines/MultiLines";
+import { parseHTML } from "../../../lib/markup";
+import ExpandableTableRow from "../../../components/ExpandableTableRow/ExpandableTableRow";
+import { Rating } from "@material-ui/lab";
 
 const styles = {
   table: {
@@ -60,28 +69,16 @@ const Searcher = () => {
     <form action="/theme/events" method="GET">
       <input name={"page"} value={router.query.page ?? 1} hidden={true} />
       <DateRangeSearcher range={input} handleRange={handleInput} />
-      <FormControl style={styles.form}>
-        <div style={styles.formLine}>
-          <Input
-            name={"search"}
-            style={styles.formInput}
-            placeholder={"검색할 테마명을 입력하세요"}
-            id="input-with-icon-adornment"
-            startAdornment={
-              <InputAdornment position="start">
-                <TimelineIcon />
-              </InputAdornment>
-            }
-          />
-          <IconButton type="submit">
-            <SearchIcon />
-          </IconButton>
-        </div>
-      </FormControl>
+      <TextSearcher
+        placeholder={'검색할 테마명을 입력하세요'}
+        search={input.search}
+        handleSearch={handleInput}
+        submit={() => {}}
+      />
     </form>
   );
 };
-const events = () => {
+const events = ({ themeEventList }) => {
   const router = useRouter();
   return (
     <MainLayout>
@@ -89,53 +86,63 @@ const events = () => {
       <Empty size="large" />
       <Searcher />
       <Empty />
-      <TableContainer component={Paper} elevation={0} variant={"outlined"}>
-        <Table style={styles.table} size="small" aria-label="a dense table">
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <h3>테마 이름</h3>
-              </TableCell>
-              <TableCell align="right">
-                <h3>관련 테마</h3>
-              </TableCell>
-              <TableCell align="right">
-                <h3>날짜</h3>
-              </TableCell>
-              <TableCell align="right">
-                <h3>중요도</h3>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow style={styles.tableRow}>
-              <TableCell component="th" scope="row">
-                테마이름
-              </TableCell>
-              <TableCell align="right">건설주</TableCell>
-              <TableCell align="right">2020-01-01</TableCell>
-              <TableCell align="right">별이다섯개</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Empty size={"large"} />
-      <div className="flex align center">
-        <Pagination
-          color={"primary"}
-          count={10}
-          page={parseInt(router.query.page ?? 1)}
-          onChange={(e, page) => {
-            router.push({
-              pathname: `/theme/event`,
-              query: {
-                ...router.query,
-                page
-              }
-            });
-          }}
-        />
-      </div>
+      <EmptySafeZone data={themeEventList.results}>
+        <TableContainer component={Paper} elevation={0} variant={"outlined"}>
+          <Table style={styles.table} size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  <h3>테마 이름</h3>
+                </TableCell>
+                <TableCell align="right">
+                  <h3>중요도</h3>
+                </TableCell>
+                <TableCell align="right">
+                  <h3>날짜</h3>
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {themeEventList.results.map(event => {
+                return (
+                  <ExpandableTableRow
+                    colSize={3}
+                    moreRow={<MultiLines lines={parseHTML(event.memo)} />}
+                  >
+                    <TableCell>{event.name}</TableCell>
+                    <TableCell align="right">
+                      <Rating readOnly value={event.importance} />
+                    </TableCell>
+                    <TableCell align="right">
+                      {beautifyDate(event.target_date)}
+                      <br />~{beautifyDate(event.target_end_date)}
+                    </TableCell>
+                  </ExpandableTableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Empty size={"large"} />
+        {themeEventList.total_page > 1 && (
+          <div className="flex align center">
+            <Pagination
+              color={"primary"}
+              count={themeEventList.total_page}
+              page={parseInt(router.query.page ?? 1)}
+              onChange={(e, page) => {
+                router.push({
+                  pathname: `/theme/event`,
+                  query: {
+                    ...router.query,
+                    page
+                  }
+                });
+              }}
+            />
+          </div>
+        )}
+      </EmptySafeZone>
     </MainLayout>
   );
 };
@@ -148,10 +155,21 @@ export async function getServerSideProps({ query, req, res }) {
         permanent: true
       }
     };
+  const { search, startDate, endDate, page } = query;
+  const themeEventList = await getAxiosResult(
+    getThemeEventList({
+      page,
+      name: search,
+      target_date: startDate,
+      target_end_date: endDate
+    })
+  );
+  isError(themeEventList, "themeEventList");
 
   return {
     props: {
-      auth: toJS(auth)
+      auth: toJS(auth),
+      themeEventList
     } // will be passed to the page component as props
   };
 }

@@ -45,6 +45,7 @@ const TextSearcher = ({ placeholder, submit, search, handleSearch }) => {
         />
         {submit && (
           <IconButton
+            type={!submit && "submit"}
             onClick={e => {
               if (submit) submit(search);
             }}

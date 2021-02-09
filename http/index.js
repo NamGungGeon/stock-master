@@ -70,6 +70,21 @@ export const getThemeRelativeEventList = ({ theme }) => {
     params: { theme }
   });
 };
+export const getThemeEventList = ({
+  page,
+  name,
+  target_date,
+  target_end_date
+}) => {
+  return axios.request({
+    url: `/api/themeevent/`,
+    headers: {
+      Authorization: `Bearer ${auth.access}`
+    },
+    method: "GET",
+    params: { page, name, target_date, target_end_date }
+  });
+};
 
 export const getThemeRelativeStockList = ({ theme }) => {
   return axios.request({
@@ -146,6 +161,27 @@ export const getThemeRelativeStock = ({ stock, page }) => {
     method: "GET",
     params: {
       stock,
+      page
+    }
+  });
+};
+
+export const getStockEventList = ({
+  name,
+  target_date,
+  target_nd_date,
+  page = 1
+}) => {
+  return axios.request({
+    url: `/api/stockevent/`,
+    headers: {
+      Authorization: `Bearer ${auth.access}`
+    },
+    method: "GET",
+    params: {
+      name,
+      target_date,
+      target_nd_date,
       page
     }
   });
