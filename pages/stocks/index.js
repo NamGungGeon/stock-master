@@ -35,7 +35,7 @@ const index = ({ query, stockList }) => {
           router.push(`/stocks?search=${search}`);
         }}
       />
-      <Empty />
+      <Empty size={"large"} />
       <StockList stockList={stockList} />
     </MainLayout>
   );

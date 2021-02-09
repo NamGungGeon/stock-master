@@ -169,7 +169,7 @@ export const getThemeRelativeStock = ({ stock, page }) => {
 export const getStockEventList = ({
   name,
   target_date,
-  target_nd_date,
+  target_end_date,
   page = 1
 }) => {
   return axios.request({
@@ -181,11 +181,26 @@ export const getStockEventList = ({
     params: {
       name,
       target_date,
-      target_nd_date,
+      target_end_date,
       page
     }
   });
 };
+
+export const getStockRelativeEvent = ({ stock, event, page = 1 }) => {
+  return axios.request({
+    url: `/api/stockevent_rl/`,
+    headers: {
+      Authorization: `Bearer ${auth.access}`
+    },
+    method: "GET",
+    params: {
+      stock,
+      page
+    }
+  });
+};
+
 export const getAxiosResult = axiosPromise => {
   return axiosPromise.then(res => res.data).catch(e => e);
 };
