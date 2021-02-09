@@ -1,4 +1,5 @@
 import React from "react";
+import { parseUrlPatternInText } from "../../lib";
 
 const MultiLines = ({ lines, style, className }) => {
   return (
@@ -8,9 +9,13 @@ const MultiLines = ({ lines, style, className }) => {
         .filter(line => line)
         .map(line => {
           return (
-            <p className="explain" key={line}>
-              {line}
-            </p>
+            <p
+              className="explain"
+              key={line}
+              dangerouslySetInnerHTML={{
+                __html: parseUrlPatternInText(line)
+              }}
+            />
           );
         })}
     </div>
