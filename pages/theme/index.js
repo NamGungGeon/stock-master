@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import PageMeta from "../../components/PageMeta/PageMeta";
 import Empty from "../../components/Empty/Empty";
 import { useRouter } from "next/router";
@@ -34,8 +34,7 @@ const theme = ({ className, query, themeList }) => {
           router.push(`/theme?search=${search}`);
         }}
       />
-      <Empty />
-      <Empty />
+      <Empty size={'large'}/>
       <ThemeList themeList={themeList} />
     </MainLayout>
   );

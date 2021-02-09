@@ -15,7 +15,6 @@ import { Button } from "@material-ui/core";
 import { beautifyDate } from "../../lib/moment";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import Pagination from "@material-ui/lab/Pagination";
-import MainLayout from "../../layout/MainLayout";
 import { useRouter } from "next/router";
 
 const styles = {
@@ -48,7 +47,6 @@ const ThemeList = ({ themeList }) => {
       data={themeList.results}
       renderWhenEmpty={() => (
         <div>
-          <Empty />
           <p className={"align center explain"}>찾으시는 종목이 없습니다</p>
         </div>
       )}
@@ -75,7 +73,6 @@ const ThemeList = ({ themeList }) => {
                   moreRow={
                     <>
                       <MultiLines lines={parseHTML(theme.memo)} />
-                      <Empty />
                       <Button
                         variant="outlined"
                         color="primary"
@@ -117,7 +114,7 @@ const ThemeList = ({ themeList }) => {
             page={parseInt(router.query.page ?? 1)}
             onChange={(e, page) => {
               router.push({
-                pathname: `./theme`,
+                pathname: `/theme`,
                 query: {
                   ...router.query,
                   page
