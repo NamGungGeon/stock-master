@@ -22,6 +22,8 @@ import PageMeta from "../../../components/PageMeta/PageMeta";
 import Empty from "../../../components/Empty/Empty";
 import auth from "../../../observables/auth";
 import { withAuth } from "../../../hoc/withAuth";
+import DateRangeSearcher from "../../../components/Searcher/DateRangeSearcher";
+import { useInput } from "../../../hooks";
 
 const styles = {
   table: {
@@ -48,33 +50,17 @@ const styles = {
 };
 
 const Searcher = () => {
+  const [input, handleInput] = useInput({
+    startDate: null,
+    endDate: null,
+    search: null
+  });
+  const router = useRouter();
   return (
-    <form action="/theme/event" method="GET">
+    <form action="/theme/events" method="GET">
+      <input name={"page"} value={router.query.page ?? 1} hidden={true} />
+      <DateRangeSearcher range={input} handleRange={handleInput} />
       <FormControl style={styles.form}>
-        <div style={styles.formLine}>
-          <TextField
-            id="startDate"
-            name="startDate"
-            label="시작 날짜"
-            type="date"
-            defaultValue="2020-01-01"
-            style={styles.formInput}
-            InputLabelProps={{
-              shrink: true
-            }}
-          />
-          <TextField
-            id="endDate"
-            name="endDate"
-            label="종료 날짜"
-            type="date"
-            defaultValue="2020-03-31"
-            style={styles.formInput}
-            InputLabelProps={{
-              shrink: true
-            }}
-          />
-        </div>
         <div style={styles.formLine}>
           <Input
             name={"search"}
