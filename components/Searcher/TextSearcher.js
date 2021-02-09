@@ -30,7 +30,7 @@ const styles = {
     flex: "1"
   }
 };
-const Searcher = ({ placeholder, value, submit = value => {} }) => {
+const TextSearcher = ({ placeholder, value, submit = value => {} }) => {
   const [input, handleInput, setInput] = useInput({
     search: ""
   });
@@ -70,4 +70,4 @@ const Searcher = ({ placeholder, value, submit = value => {} }) => {
   );
 };
 
-export default Searcher;
+export default TextSearcher;
