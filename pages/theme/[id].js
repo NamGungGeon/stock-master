@@ -46,7 +46,7 @@ const themeDetail = ({
   return (
     <MainLayout className={className}>
       <PageMeta title={theme.name} description={""} />
-      <MultiLines lines={parseHTML(theme.memo)} />
+      <MultiLines lines={parseHTML(theme.memo) || "-"} />
       <Empty size="large" />
       <Divider light />
       <h2>관련주</h2>

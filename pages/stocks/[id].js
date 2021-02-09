@@ -26,16 +26,14 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import { beautifyDate } from "../../lib/moment";
 import ChangeHistoryIcon from "@material-ui/icons/ChangeHistory";
-import DetailsIcon from "@material-ui/icons/Details";
 import { Details } from "@material-ui/icons";
-import ExpandableTableRow from "../../components/ExpandableTableRow/ExpandableTableRow";
 import ThemeList from "../../containers/ThemeList/ThemeList";
 
 const stockDetail = ({ className, stock, stockHistory, relativeThemeList }) => {
   return (
     <MainLayout className={className}>
       <PageMeta title={`${stock.name} (${stock.sosok})`} description={""} />
-      <MultiLines lines={parseHTML(stock.memo)} />
+      <MultiLines lines={parseHTML(stock.memo) || "-"} />
 
       <Empty size="large" />
       <Divider light />
