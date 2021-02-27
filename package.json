@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3002",
+    "start": "forever -m=10000 --minUpTime=1000 --spinSleepTime=1000 start ./node_modules/.bin/next start -p 3002",
     "deploy": "git pull && npm install && npm run build && npm run start"
   },
   "dependencies": {
@@ -15,6 +15,7 @@
     "axios": "^0.21.1",
     "class-validator": "^0.13.1",
     "classnames": "^2.2.6",
+    "forever": "^3.0.4",
     "mobx": "^6.0.4",
     "mobx-react-lite": "^3.1.6",
     "moment": "^2.29.1",
