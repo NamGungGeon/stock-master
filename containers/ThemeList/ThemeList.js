@@ -70,6 +70,7 @@ const ThemeList = ({ themeList }) => {
             {themeList.results.map(theme => {
               return (
                 <ExpandableTableRow
+                  key={`${theme.id}-theme`}
                   moreRow={
                     <>
                       <MultiLines lines={parseHTML(theme.memo)} />

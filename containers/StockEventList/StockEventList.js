@@ -67,6 +67,7 @@ const StockEventList = ({ stockEventList }) => {
               console.log("event", event);
               return (
                 <ExpandableTableRow
+                  key={`${event.id}-stockEvent`}
                   colSize={4}
                   moreRow={
                     <div>
@@ -76,6 +77,7 @@ const StockEventList = ({ stockEventList }) => {
                           const { stock } = relative;
                           return (
                             <Chip
+                              key={`${event.id}-${stock.id}-relative`}
                               onClick={e => router.push(`/stocks/${stock.id}`)}
                               label={`${stock.name} (${stock.sosok})`}
                               clickable

@@ -69,6 +69,7 @@ const ThemeEventList = ({ themeEventList }) => {
               return (
                 <ExpandableTableRow
                   colSize={3}
+                  key={`${event.id}-tEvent`}
                   moreRow={
                     <div>
                       <Empty />
@@ -78,6 +79,7 @@ const ThemeEventList = ({ themeEventList }) => {
                           return (
                             <Tooltip title={parseHTML(theme.memo)}>
                               <Chip
+                                key={`${event.id}-${theme.id}-rTheme`}
                                 onClick={e => router.push(`/theme/${theme.id}`)}
                                 label={`${theme.name}`}
                                 clickable

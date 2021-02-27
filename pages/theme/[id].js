@@ -96,7 +96,7 @@ const themeDetail = ({
               {themeRankStockList.results.map(rank => {
                 const { stock } = rank;
                 return (
-                  <TableRow>
+                  <TableRow key={`${stock.id}-rankByStock`}>
                     <TableCell>
                       {stock.name} ({stock.sosok})
                     </TableCell>
@@ -142,7 +142,7 @@ const themeDetail = ({
               <TableBody>
                 {themeRankStockListByDate.map(rank => {
                   return (
-                    <TableRow>
+                    <TableRow key={`${rank.created}-rankByDate`}>
                       <TableCell>{rank.created}</TableCell>
                       <TableCell align="right">
                         {rank.rank_1st || "-"}

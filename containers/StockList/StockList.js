@@ -78,6 +78,7 @@ const StockList = ({ stockList }) => {
                   "memo": ""*/
                 return (
                   <ExpandableTableRow
+                    key={`${stock.id}-stock`}
                     moreRow={
                       <>
                         <MultiLines lines={parseHTML(stock.memo)} />

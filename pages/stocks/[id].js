@@ -64,7 +64,7 @@ const stockDetail = ({ className, stock, stockHistory, relativeThemeList }) => {
               {stockHistory.results.map(history => {
                 const isUp = parseInt(history.changes) > 0;
                 return (
-                  <TableRow>
+                  <TableRow key={`${history.id}-stockHistory`}>
                     <TableCell>{beautifyDate(history.history_date)}</TableCell>
                     <TableCell>{history.memo}</TableCell>
                     <TableCell align="right">
