@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p 3002",
+    "deploy": "git pull && yarn && yarn build && yarn start"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.2",
