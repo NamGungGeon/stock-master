@@ -14,6 +14,11 @@ class Auth {
     this.refresh = refresh;
     this.isLogined = this.access && this.refresh;
   }
+  remove() {
+    this.access = null;
+    this.refresh = null;
+    this.isLogined = false;
+  }
 }
 
 const auth = new Auth();

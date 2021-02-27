@@ -92,8 +92,6 @@ const signin = ({ message }) => {
 };
 
 export const getServerSideProps = async function({ req, res }) {
-  await applySession(req, res);
-
   if (req.method === "POST") {
     const { id, pw } = await parse(req);
     console.log(id, pw);
@@ -134,10 +132,7 @@ export const getServerSideProps = async function({ req, res }) {
       }
     };
   } else {
-    const tokens = req.session.auth;
-
-    if (tokens) {
-      auth.set(tokens.access, tokens.refresh);
+    if (auth.isLogined) {
       return {
         redirect: {
           destination: "/",
