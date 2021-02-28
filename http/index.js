@@ -1,31 +1,10 @@
 import axios from "axios";
-import auth from "../observables/auth";
 
 const host = "http://125.141.133.134:898";
-axios.defaults.baseURL = host;
-axios.defaults.headers = {
-  "Content-type": "application/json"
-};
 
-export const verifyToken = () => {
-  return axios.request({
-    url: `/api/token/verify/`,
-    method: "POST",
-    data: {
-      token: auth.access
-    }
-  });
+export const getAxiosResult = axiosPromise => {
+  return axiosPromise.then(res => res.data).catch(e => e);
 };
-export const refreshToken = () => {
-  return axios.request({
-    url: `/api/token/refresh/`,
-    method: "POST",
-    data: {
-      refresh: auth.refresh
-    }
-  });
-};
-
 export const login = (username, password) => {
   return axios.request({
     url: `/api/token/`,
@@ -36,13 +15,42 @@ export const login = (username, password) => {
     }
   });
 };
-
-export const getThemeList = ({ page = 1, name }) => {
+export const verifyToken = access => {
   return axios.request({
-    url: `/api/themecode/`,
+    url: `/api/token/verify/`,
+    method: "POST",
+    data: {
+      token: access
+    }
+  });
+};
+export const refreshToken = refresh => {
+  return axios.request({
+    url: `/api/token/refresh/`,
+    method: "POST",
+    data: {
+      refresh: refresh
+    }
+  });
+};
+
+const ApiRequest = function(nestedAuth) {
+  this.updateAuth(nestedAuth);
+};
+ApiRequest.prototype.updateAuth = function(nestedAuth) {
+  const { access, refresh } = nestedAuth;
+  this.axios = axios.create({
+    baseURL: host,
+    timeout: 1000,
     headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
+      "Content-type": "application/json",
+      Authorization: `Bearer ${access}`
+    }
+  });
+};
+ApiRequest.prototype.getThemeList = function({ page = 1, name }) {
+  return this.axios.request({
+    url: `/api/themecode/`,
     method: "GET",
     params: {
       page,
@@ -50,100 +58,69 @@ export const getThemeList = ({ page = 1, name }) => {
     }
   });
 };
-export const getTheme = id => {
-  return axios.request({
+ApiRequest.prototype.getTheme = function(id) {
+  return this.axios.request({
     url: `/api/themecode/${id}/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET"
   });
 };
-
-export const getThemeRelativeEventList = ({ theme }) => {
-  return axios.request({
+ApiRequest.prototype.getThemeRelativeEventList = function({ theme }) {
+  return this.axios.request({
     url: `/api/themeevent_rl/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: {}
   });
 };
-export const getThemeEventList = ({
+ApiRequest.prototype.getThemeEventList = function({
   page,
   name,
   target_date,
   target_end_date
-}) => {
-  return axios.request({
+}) {
+  console.log("this", this);
+  return this.axios.request({
     url: `/api/themeevent/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: { page, name, target_date, target_end_date }
   });
 };
-
-export const getThemeRelativeStockList = ({ theme }) => {
-  return axios.request({
+ApiRequest.prototype.getThemeRelativeStockList = function({ theme }) {
+  return this.axios.request({
     url: `/api/themestock_rl/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: { theme }
   });
 };
-
-export const getThemeRankStockListByDate = ({ theme }) => {
-  return axios.request({
+ApiRequest.prototype.getThemeRankStockListByDate = function({ theme }) {
+  return this.axios.request({
     url: `/api/themestock_rh/summary_by_date/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: { theme }
   });
 };
-export const getThemeRankStockList = ({ theme }) => {
-  return axios.request({
+ApiRequest.prototype.getThemeRankStockList = function({ theme }) {
+  return this.axios.request({
     url: `/api/themestock_rh/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: { theme }
   });
 };
-
-export const getStockList = ({ code, name, page }) => {
-  return axios.request({
+ApiRequest.prototype.getStockList = function({ code, name, page }) {
+  return this.axios.request({
     url: `/api/stockcode/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: { code, name, page }
   });
 };
-export const getStock = id => {
-  return axios.request({
+ApiRequest.prototype.getStock = function(id) {
+  return this.axios.request({
     url: `/api/stockcode/${id}`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET"
   });
 };
-
-export const getStockHistory = ({ stock, page }) => {
-  return axios.request({
+ApiRequest.prototype.getStockHistory = function({ stock, page }) {
+  return this.axios.request({
     url: `/api/special_shl/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: {
       stock,
@@ -151,13 +128,9 @@ export const getStockHistory = ({ stock, page }) => {
     }
   });
 };
-
-export const getThemeRelativeStock = ({ stock, page }) => {
-  return axios.request({
+ApiRequest.prototype.getThemeRelativeStock = function({ stock, page }) {
+  return this.axios.request({
     url: `/api/themestock_rl/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: {
       stock,
@@ -165,18 +138,14 @@ export const getThemeRelativeStock = ({ stock, page }) => {
     }
   });
 };
-
-export const getStockEventList = ({
+ApiRequest.prototype.getStockEventList = function({
   name,
   target_date,
   target_end_date,
   page = 1
-}) => {
-  return axios.request({
+}) {
+  return this.axios.request({
     url: `/api/stockevent/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: {
       name,
@@ -186,13 +155,13 @@ export const getStockEventList = ({
     }
   });
 };
-
-export const getStockRelativeEvent = ({ stock, event, page = 1 }) => {
-  return axios.request({
+ApiRequest.prototype.getStockRelativeEvent = function({
+  stock,
+  event,
+  page = 1
+}) {
+  return this.axios.request({
     url: `/api/stockevent_rl/`,
-    headers: {
-      Authorization: `Bearer ${auth.access}`
-    },
     method: "GET",
     params: {
       stock,
@@ -201,6 +170,4 @@ export const getStockRelativeEvent = ({ stock, event, page = 1 }) => {
   });
 };
 
-export const getAxiosResult = axiosPromise => {
-  return axiosPromise.then(res => res.data).catch(e => e);
-};
+export default ApiRequest;

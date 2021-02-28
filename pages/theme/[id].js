@@ -1,4 +1,4 @@
-import { Chip, Divider, makeStyles } from "@material-ui/core";
+import { Chip, Divider } from "@material-ui/core";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import Empty from "../../components/Empty/Empty";
@@ -11,22 +11,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import MainLayout from "../../layout/MainLayout";
-import {
-  getThemeRelativeStockList,
-  getTheme,
-  getThemeRelativeEventList,
-  getThemeRankStockList,
-  getThemeRankStockListByDate
-} from "../../http";
-import auth from "../../observables/auth";
-import { toJS } from "mobx";
 import { isError } from "../../lib";
 import { parseHTML } from "../../lib/markup";
 import MultiLines from "../../components/MultiLines/MultiLines";
 import { withAuth } from "../../hoc/withAuth";
-import { Rating } from "@material-ui/lab";
-import { beautifyDate } from "../../lib/moment";
-import ExpandableTableRow from "../../components/ExpandableTableRow/ExpandableTableRow";
 import EmptySafeZone from "../../components/EmptySafeZone/EmptySafeZone";
 import ThemeEventList from "../../containers/ThemeEventList/ThemeEventList";
 
@@ -180,39 +168,48 @@ const themeDetail = ({
 };
 
 export async function getServerSideProps({ params, req, res }) {
-  if (!auth.isLogined)
+  const { auth } = req.session;
+  const request = auth.request.bind(auth);
+
+  if (!auth.filled())
     return {
       redirect: {
         destination: "/sign/in",
         permanent: true
       }
     };
+
   const { id } = params;
 
-  const theme = await getTheme(id)
+  const theme = await request()
+    .getTheme(id)
     .then(res => res.data)
     .catch(e => e);
   isError(theme, "theme");
 
-  const themeEventList = await getThemeRelativeEventList({ theme: theme.name })
+  const themeEventList = await request()
+    .getThemeRelativeEventList({ theme: theme.name })
     .then(res => res.data)
     .catch(e => e);
   isError(themeEventList, "themeEventList");
 
-  const relativeStockList = await getThemeRelativeStockList({
-    theme: theme.name
-  })
+  const relativeStockList = await request()
+    .getThemeRelativeStockList({
+      theme: theme.name
+    })
     .then(res => res.data)
     .catch(e => e);
   isError(relativeStockList, "relativeStockList");
 
-  const themeRankStockList = await getThemeRankStockList({ theme: theme.name })
+  const themeRankStockList = await request()
+    .getThemeRankStockList({ theme: theme.name })
     .then(res => res.data)
     .catch(e => e);
   isError(themeRankStockList, "themeRankStockList");
-  const themeRankStockListByDate = await getThemeRankStockListByDate({
-    theme: theme.name
-  })
+  const themeRankStockListByDate = await request()
+    .getThemeRankStockListByDate({
+      theme: theme.name
+    })
     .then(res => res.data)
     .catch(e => e);
   isError(themeRankStockListByDate, "themeRankStockListByDate");
@@ -224,7 +221,7 @@ export async function getServerSideProps({ params, req, res }) {
       relativeStockList,
       themeRankStockList,
       themeRankStockListByDate,
-      auth: toJS(auth)
+      auth: auth.toJSON()
     } // will be passed to the page component as props
   };
 }

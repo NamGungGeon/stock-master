@@ -1,10 +1,7 @@
-import { toJS } from "mobx";
 import React, { useEffect } from "react";
 import PageMeta from "../../components/PageMeta/PageMeta";
 import { withAuth } from "../../hoc/withAuth";
 import MainLayout from "../../layout/MainLayout";
-import auth from "../../observables/auth";
-import { getStockList } from "../../http";
 import { isError } from "../../lib";
 import StockList from "../../containers/StockList/StockList";
 import Empty from "../../components/Empty/Empty";
@@ -42,7 +39,10 @@ const index = ({ query, stockList }) => {
 };
 
 export async function getServerSideProps({ query, req, res }) {
-  if (!auth.isLogined)
+  const { auth } = req.session;
+  const request = auth.request.bind(auth);
+
+  if (!auth.filled())
     return {
       redirect: {
         destination: "/sign/in",
@@ -51,18 +51,19 @@ export async function getServerSideProps({ query, req, res }) {
     };
 
   const { code, search, page } = query;
-  const stockList = await getStockList({
-    code,
-    name: search,
-    page
-  })
+  const stockList = await request()
+    .getStockList({
+      code,
+      name: search,
+      page
+    })
     .then(res => res.data)
     .catch(e => e);
   isError(stockList, "stockList");
 
   return {
     props: {
-      auth: toJS(auth),
+      auth: auth.toJSON(),
       stockList,
       query
     } // will be passed to the page component as props

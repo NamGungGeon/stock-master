@@ -2,11 +2,7 @@ import React, { useEffect } from "react";
 import PageMeta from "../../components/PageMeta/PageMeta";
 import Empty from "../../components/Empty/Empty";
 import { useRouter } from "next/router";
-
-import { getThemeList } from "../../http";
 import MainLayout from "../../layout/MainLayout";
-import auth from "../../observables/auth";
-import { toJS } from "mobx";
 import { withAuth } from "../../hoc/withAuth";
 import ThemeList from "../../containers/ThemeList/ThemeList";
 import TextSearcher from "../../components/Searcher/TextSearcher";
@@ -34,13 +30,17 @@ const theme = ({ className, query, themeList }) => {
           router.push(`/theme?search=${search}`);
         }}
       />
-      <Empty size={'large'}/>
+      <Empty size={"large"} />
       <ThemeList themeList={themeList} />
     </MainLayout>
   );
 };
 export async function getServerSideProps({ query, req, res }) {
-  if (!auth.isLogined)
+  const { auth } = req.session;
+  const request = auth.request.bind(auth);
+  console.log(auth, auth.request);
+
+  if (!auth.filled())
     return {
       redirect: {
         destination: "/sign/in",
@@ -50,7 +50,8 @@ export async function getServerSideProps({ query, req, res }) {
 
   const { page = 1, search } = query;
 
-  const themeList = await getThemeList({ page, name: search })
+  const themeList = await request()
+    .getThemeList({ page, name: search })
     .then(res => res.data)
     .catch(e => e);
   console.log(themeList);
@@ -59,7 +60,7 @@ export async function getServerSideProps({ query, req, res }) {
   return {
     props: {
       themeList,
-      auth: toJS(auth),
+      auth: auth.toJSON(),
       query
     } // will be passed to the page component as props
   };

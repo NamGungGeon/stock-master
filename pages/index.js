@@ -31,18 +31,19 @@ function Home({ className }) {
 }
 export default withAuth(Home);
 
-export const getServerSideProps = async function({ req, res }) {
-  if (!auth.isLogined)
+export const getServerSideProps = async function({ req }) {
+  const { auth } = req.session;
+
+  if (!auth.filled())
     return {
       redirect: {
         destination: "/sign/in",
         permanent: true
       }
     };
-
   return {
     props: {
-      auth: toJS(auth)
+      auth: auth.toJSON()
     }
   };
 };

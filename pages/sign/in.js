@@ -9,11 +9,11 @@ import Empty from "../../components/Empty/Empty";
 import { useInput } from "../../hooks";
 import { Button, FormGroup } from "@material-ui/core";
 import LockIcon from "@material-ui/icons/Lock";
-import { login } from "../../http";
-import { applySession } from "next-session";
 import parse from "urlencoded-body-parser";
-import auth from "../../observables/auth";
 import MainLayout from "../../layout/MainLayout";
+import { isError } from "../../lib";
+import { SessionAuth } from "../../lib/serverSideAuth";
+import { login } from "../../http";
 
 const styles = {
   form: {
@@ -92,47 +92,44 @@ const signin = ({ message }) => {
 };
 
 export const getServerSideProps = async function({ req, res }) {
-  if (req.method === "POST") {
+  console.log("page");
+  const { auth: sessionAuth } = req.session;
+  const requestLogin = async () => {
     const { id, pw } = await parse(req);
-    console.log(id, pw);
     if (!id || !pw) {
-      return {
-        redirect: {
-          destination: "/sign/in",
-          permanent: false
-        }
-      };
+      throw "아이디와 비밀번호를 모두 입력하세요";
     }
-
     const tokens = await login(id, pw)
       .then(res => {
-        console.log("auth", res.data);
         return res.data;
       })
-      .catch(e => {
-        if (e.response) console.error(e.response.status, e.response.data);
-        else console.error(e);
-
-        return null;
-      });
-
-    if (tokens) {
-      req.session.auth = tokens;
-      auth.set(tokens.access, tokens.refresh);
-      return {
-        redirect: {
-          destination: "/",
-          permanent: true
-        }
-      };
+      .catch(e => e);
+    if (isError(tokens, "login")) {
+      throw "아이디와 비밀번호가 일치하지 않습니다";
     }
-    return {
-      props: {
-        message: "아이디와 비밀번호를 다시 확인하세요"
-      }
-    };
+    return tokens;
+  };
+
+  if (req.method === "POST") {
+    return await requestLogin()
+      .then(tokens => {
+        req.session.auth = new SessionAuth(tokens.access, tokens.refresh);
+        return {
+          redirect: {
+            destination: "/",
+            permanent: true
+          }
+        };
+      })
+      .catch(e => {
+        return {
+          props: {
+            message: e.toString()
+          }
+        };
+      });
   } else {
-    if (auth.isLogined) {
+    if (sessionAuth.filled()) {
       return {
         redirect: {
           destination: "/",

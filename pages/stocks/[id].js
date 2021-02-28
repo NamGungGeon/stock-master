@@ -2,15 +2,6 @@ import React from "react";
 import { withAuth } from "../../hoc/withAuth";
 import MainLayout from "../../layout/MainLayout";
 import PageMeta from "../../components/PageMeta/PageMeta";
-import auth from "../../observables/auth";
-import { toJS } from "mobx";
-import {
-  getAxiosResult,
-  getStock,
-  getStockHistory,
-  getThemeRelativeEventList,
-  getThemeRelativeStock
-} from "../../http";
 import { isError } from "../../lib";
 import MultiLines from "../../components/MultiLines/MultiLines";
 import { parseHTML } from "../../lib/markup";
@@ -28,6 +19,7 @@ import { beautifyDate } from "../../lib/moment";
 import ChangeHistoryIcon from "@material-ui/icons/ChangeHistory";
 import { Details } from "@material-ui/icons";
 import ThemeList from "../../containers/ThemeList/ThemeList";
+import { getAxiosResult } from "../../http";
 
 const stockDetail = ({ className, stock, stockHistory, relativeThemeList }) => {
   return (
@@ -125,7 +117,10 @@ const stockDetail = ({ className, stock, stockHistory, relativeThemeList }) => {
 };
 
 export async function getServerSideProps({ params, req, res }) {
-  if (!auth.isLogined)
+  const { auth } = req.session;
+  const request = auth.request.bind(auth);
+
+  if (!auth.filled())
     return {
       redirect: {
         destination: "/sign/in",
@@ -134,20 +129,20 @@ export async function getServerSideProps({ params, req, res }) {
     };
   const { id } = params;
 
-  const stock = await getAxiosResult(getStock(id));
+  const stock = await getAxiosResult(request().getStock(id));
   isError(stock, "stock");
   const stockHistory = await getAxiosResult(
-    getStockHistory({ stock: stock.name, page: 1 })
+    request().getStockHistory({ stock: stock.name, page: 1 })
   );
   isError(stockHistory, "stockHistory");
   const relativeThemeList = await getAxiosResult(
-    getThemeRelativeStock({ stock: stock.name, page: 1 })
+    request().getThemeRelativeStock({ stock: stock.name, page: 1 })
   );
   isError(relativeThemeList, "relativeThemeList");
 
   return {
     props: {
-      auth: toJS(auth),
+      auth: auth.toJSON(),
       stock,
       stockHistory,
       relativeThemeList

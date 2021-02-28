@@ -13,9 +13,7 @@ const out = () => {
 };
 
 export const getServerSideProps = async function({ req, res }) {
-  await applySession(req, res);
   req.session?.destroy();
-  auth.remove();
 
   return {
     props: {}

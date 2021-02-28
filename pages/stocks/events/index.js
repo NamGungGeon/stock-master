@@ -1,27 +1,21 @@
-import { toJS } from "mobx";
 import React from "react";
 import PageMeta from "../../../components/PageMeta/PageMeta";
 import { withAuth } from "../../../hoc/withAuth";
 import MainLayout from "../../../layout/MainLayout";
-import auth from "../../../observables/auth";
 import { useInput } from "../../../hooks";
 import { useRouter } from "next/router";
 import DateRangeSearcher from "../../../components/Searcher/DateRangeSearcher";
 import TextSearcher from "../../../components/Searcher/TextSearcher";
 import Empty from "../../../components/Empty/Empty";
-import {
-  getAxiosResult,
-  getStockEventList,
-  getStockRelativeEvent
-} from "../../../http";
+import { getAxiosResult } from "../../../http";
 import { isError } from "../../../lib";
 import StockEventList from "../../../containers/StockEventList/StockEventList";
 
 const Searcher = () => {
   const [input, handleInput] = useInput({
-    startDate: null,
-    endDate: null,
-    search: null
+    startDate: "",
+    endDate: "",
+    search: ""
   });
   const router = useRouter();
   return (
@@ -51,16 +45,20 @@ const event = ({ stockEventList }) => {
 };
 
 export async function getServerSideProps({ query, req, res }) {
-  if (!auth.isLogined)
+  const { auth } = req.session;
+  const request = auth.request.bind(auth);
+
+  if (!auth.filled())
     return {
       redirect: {
         destination: "/sign/in",
         permanent: true
       }
     };
+
   const { search, startDate, endDate, page } = query;
   const stockEventList = await getAxiosResult(
-    getStockEventList({
+    request().getStockEventList({
       name: search,
       target_date: startDate,
       target_end_date: endDate,
@@ -73,7 +71,7 @@ export async function getServerSideProps({ query, req, res }) {
       promises.push(
         new Promise(async (rs, rj) => {
           const relatives = await getAxiosResult(
-            getStockRelativeEvent({
+            request().getStockRelativeEvent({
               event: event.name
             })
           );
@@ -96,7 +94,7 @@ export async function getServerSideProps({ query, req, res }) {
   }
   return {
     props: {
-      auth: toJS(auth),
+      auth: auth.toJSON(),
       stockEventList
     } // will be passed to the page component as props
   };

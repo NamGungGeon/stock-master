@@ -1,31 +1,24 @@
 import React from "react";
 
 import { useRouter } from "next/router";
-import { toJS } from "mobx";
 import MainLayout from "../../../layout/MainLayout";
 import PageMeta from "../../../components/PageMeta/PageMeta";
 import Empty from "../../../components/Empty/Empty";
-import auth from "../../../observables/auth";
 import { withAuth } from "../../../hoc/withAuth";
 import DateRangeSearcher from "../../../components/Searcher/DateRangeSearcher";
 import { useInput } from "../../../hooks";
 import TextSearcher from "../../../components/Searcher/TextSearcher";
-import {
-  getAxiosResult,
-  getStockRelativeEvent,
-  getThemeEventList,
-  getThemeRelativeEventList
-} from "../../../http";
+import { getAxiosResult } from "../../../http";
 import { isError } from "../../../lib";
 import ThemeEventList from "../../../containers/ThemeEventList/ThemeEventList";
 
 const Searcher = () => {
-  const [input, handleInput] = useInput({
-    startDate: null,
-    endDate: null,
-    search: null
-  });
   const router = useRouter();
+  const [input, handleInput] = useInput({
+    startDate: "",
+    endDate: "",
+    search: ""
+  });
   return (
     <form action="/theme/events" method="GET">
       <input name={"page"} value={router.query.page ?? 1} hidden={true} />
@@ -52,16 +45,20 @@ const events = ({ themeEventList }) => {
 };
 
 export async function getServerSideProps({ query, req, res }) {
-  if (!auth.isLogined)
+  const { auth } = req.session;
+  const request = auth.request.bind(auth);
+
+  if (!auth.filled())
     return {
       redirect: {
         destination: "/sign/in",
         permanent: true
       }
     };
+
   const { search, startDate, endDate, page } = query;
   const themeEventList = await getAxiosResult(
-    getThemeEventList({
+    request().getThemeEventList({
       page,
       name: search,
       target_date: startDate,
@@ -74,7 +71,7 @@ export async function getServerSideProps({ query, req, res }) {
       promises.push(
         new Promise(async (rs, rj) => {
           const relatives = await getAxiosResult(
-            getThemeRelativeEventList({
+            request().getThemeRelativeEventList({
               theme: event.name
             })
           );
@@ -99,7 +96,7 @@ export async function getServerSideProps({ query, req, res }) {
 
   return {
     props: {
-      auth: toJS(auth),
+      auth: auth.toJSON(),
       themeEventList
     } // will be passed to the page component as props
   };
