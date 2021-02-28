@@ -7,6 +7,7 @@ export const getAxiosResult = axiosPromise => {
 };
 export const login = (username, password) => {
   return axios.request({
+    baseURL: host,
     url: `/api/token/`,
     method: "POST",
     data: {
@@ -17,6 +18,7 @@ export const login = (username, password) => {
 };
 export const verifyToken = access => {
   return axios.request({
+    baseURL: host,
     url: `/api/token/verify/`,
     method: "POST",
     data: {
@@ -26,6 +28,7 @@ export const verifyToken = access => {
 };
 export const refreshToken = refresh => {
   return axios.request({
+    baseURL: host,
     url: `/api/token/refresh/`,
     method: "POST",
     data: {
