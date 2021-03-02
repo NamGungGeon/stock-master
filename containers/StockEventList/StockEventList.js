@@ -92,15 +92,6 @@ const StockEventList = ({ stockEventList }) => {
                       <Empty />
                       <Divider light />
                       <MultiLines lines={parseHTML(event.memo)} />
-                      <Button
-                        variant={"outlined"}
-                        color={"primary"}
-                        onClick={e => {
-                          router.push(`/stocks/events/${event.id}`);
-                        }}
-                      >
-                        더보기
-                      </Button>
                     </div>
                   }
                 >
