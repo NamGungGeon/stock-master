@@ -71,7 +71,9 @@ ApiRequest.prototype.getThemeRelativeEventList = function({ theme }) {
   return this.axios.request({
     url: `/api/themeevent_rl/`,
     method: "GET",
-    params: {}
+    params: {
+      theme
+    }
   });
 };
 ApiRequest.prototype.getThemeEventList = function({
