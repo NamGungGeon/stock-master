@@ -11,13 +11,12 @@ import TextSearcher from "../../../components/Searcher/TextSearcher";
 import { getAxiosResult } from "../../../http";
 import { isError } from "../../../lib";
 import ThemeEventList from "../../../containers/ThemeEventList/ThemeEventList";
+import { getCurrentDateString } from "../../../lib/moment";
 
-const Searcher = () => {
+const Searcher = ({ filter }) => {
   const router = useRouter();
   const [input, handleInput] = useInput({
-    startDate: "",
-    endDate: "",
-    search: ""
+    ...filter
   });
   return (
     <form action="/theme/events" method="GET">
@@ -32,12 +31,12 @@ const Searcher = () => {
     </form>
   );
 };
-const events = ({ themeEventList }) => {
+const events = ({ themeEventList, filter }) => {
   return (
     <MainLayout>
-      <PageMeta title="테마 일정" />
+      <PageMeta title="테마 일정" description={"테마 일정"} />
       <Empty size="large" />
-      <Searcher />
+      <Searcher filter={filter} />
       <Empty />
       <ThemeEventList themeEventList={themeEventList} />
     </MainLayout>
@@ -56,7 +55,15 @@ export async function getServerSideProps({ query, req, res }) {
       }
     };
 
-  const { search, startDate, endDate, page } = query;
+  const todayDateString = getCurrentDateString("YYYY-MM-DD");
+  const filter = {
+    ...query,
+    search: query.search ?? "",
+    startDate: query.startDate ?? todayDateString,
+    endDate: query.endDate ?? todayDateString
+  };
+
+  const { search, startDate, endDate, page } = filter;
   const themeEventList = await getAxiosResult(
     request().getThemeEventList({
       page,
@@ -97,6 +104,7 @@ export async function getServerSideProps({ query, req, res }) {
   return {
     props: {
       auth: auth.toJSON(),
+      filter,
       themeEventList
     } // will be passed to the page component as props
   };

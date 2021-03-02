@@ -10,12 +10,11 @@ import Empty from "../../../components/Empty/Empty";
 import { getAxiosResult } from "../../../http";
 import { isError } from "../../../lib";
 import StockEventList from "../../../containers/StockEventList/StockEventList";
+import { getCurrentDateString } from "../../../lib/moment";
 
-const Searcher = () => {
+const Searcher = ({ filter }) => {
   const [input, handleInput] = useInput({
-    startDate: "",
-    endDate: "",
-    search: ""
+    ...filter
   });
   const router = useRouter();
   return (
@@ -32,12 +31,12 @@ const Searcher = () => {
   );
 };
 
-const event = ({ stockEventList }) => {
+const event = ({ stockEventList, filter }) => {
   return (
     <MainLayout>
       <PageMeta title="종목 일정" description="종목 일정" />
       <Empty size={"large"} />
-      <Searcher />
+      <Searcher filter={filter} />
       <Empty />
       <StockEventList stockEventList={stockEventList} />
     </MainLayout>
@@ -56,7 +55,15 @@ export async function getServerSideProps({ query, req, res }) {
       }
     };
 
-  const { search, startDate, endDate, page } = query;
+  const todayDateString = getCurrentDateString("YYYY-MM-DD");
+  const filter = {
+    ...query,
+    search: query.search ?? "",
+    startDate: query.startDate ?? todayDateString,
+    endDate: query.endDate ?? todayDateString
+  };
+
+  const { search, startDate, endDate, page } = filter;
   const stockEventList = await getAxiosResult(
     request().getStockEventList({
       name: search,
@@ -95,6 +102,7 @@ export async function getServerSideProps({ query, req, res }) {
   return {
     props: {
       auth: auth.toJSON(),
+      filter,
       stockEventList
     } // will be passed to the page component as props
   };
